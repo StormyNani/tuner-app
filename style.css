@@ -1,0 +1,871 @@
+*{
+    box-sizing: border-box;
+}
+
+:root {
+    --sesi-red: #d71920;
+    --sesi-dark-red: #a90f15;
+
+    --background: #f3f4f6;
+    --card: #ffffff;
+
+    --text-primary: #222222;
+    --text-secondary: #666666;
+
+    --border: #dddddd;
+}
+
+body {
+    min-height: 100vh;
+
+    margin: 0;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    text-align: center;
+
+    color: var(--text-primary);
+
+    background: linear-gradient(135deg, #f7f7f7, #eceff1);
+
+}
+
+
+
+header {
+
+    padding: 24px 20px 12px;
+
+}
+
+header h1 {
+    margin: 0;
+
+    font-size: clamp(28px, 6vw, 42px);
+
+    color: var(--sesi-red);
+
+    letter-spacing: -1px;
+}
+
+header img {
+
+    width: 100px;
+
+}
+
+
+
+main {
+
+    width: min(600px, 100%);
+
+    margin: 0 auto;
+
+    padding: 20px;
+
+}
+
+
+
+button {
+
+    padding: 12px 22px;
+
+    margin: 8px;
+
+    font-size: 15px;
+    font-weight: bold;
+
+    color: white;
+
+    background-color: var(--sesi-red);
+
+    border: none;
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    box-shadow: 0 5px 14px rgba(215, 25, 32, 0.22);
+
+    transition: 
+        transform 120ms ease,
+        background-color 120ms ease,
+        box-shadow 120ms ease;
+}
+
+
+
+button:hover:not(:disabled) {
+    background-color: var(--sesi-dark-red);
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 8px 18px rgba(215, 25, 32, 0.28);
+}
+
+
+
+button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+
+
+#backToMenu {
+    color: var(--sesi-red);
+
+    background-color: transparent;
+
+    border: 1px solid var(--sesi-red);
+
+    box-shadow: none;
+}
+
+
+
+#tuner {
+
+    margin-top: 10px;
+
+    padding: 24px;
+
+    background-color: var(--card);
+
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 24px;
+
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.09);
+
+}
+
+
+
+canvas {
+
+    display: block;
+
+    max-width: 100%;
+    height: auto;
+
+    border: 1px solid black;
+
+    margin: 20px auto 0;
+
+}
+
+
+
+footer {
+
+    margin-top: 40px;
+
+}
+
+
+
+#tunerMeter {
+
+    position: relative;
+
+    width: min(340px, 90vw);
+    height: 190px;
+
+    margin: 35px auto 20px;
+
+}
+
+
+
+button:disabled {
+
+    cursor: not-allowed;
+
+    opacity: 0.6;
+
+}
+
+
+
+#tuningSettings {
+    margin: 20px 0;
+}
+
+
+
+#tuningReference {
+    width: 70px;
+    padding: 6px;
+    margin-left: 5px;
+
+    text-align: center;
+}
+
+
+
+#tuningStatus {
+
+    min-height: 24px;
+
+    margin: 12px 0;
+
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+
+#tuningStatus.tuned {
+    color: #2ecc71;
+}
+
+
+
+#tuningStatus.almost-tuned {
+    color: #d4a900;
+}
+
+
+
+#tuningStatus.out-of-tune {
+    color: #e74c3c;
+}
+
+
+
+#gaugeArc {
+    position: absolute;
+
+    width: 300px;
+    height: 150px;
+
+    left: 50%;
+    bottom: 15px;
+
+    transform: translateX(-50%);
+
+    overflow: hidden;
+}
+
+
+
+#gaugeArc::before {
+    content: "";
+
+    position: absolute;
+
+    width: 300px;
+    height: 300px;
+
+    left: 0;
+    top: 0;
+
+    border-radius: 50%;
+
+    background: conic-gradient(
+        from 270deg,
+
+        #e74c3c 0deg 36deg,
+        #f1c40f 36deg 72deg,
+        #2ecc71 72deg 108deg,
+        #f1c40f 108deg 144deg,
+        #e74c3c 144deg 180deg,
+
+        transparent 180deg 360deg
+    );
+}
+
+
+
+#gaugeArc::after {
+    content: "";
+
+    position: absolute;
+
+    width: 250px;
+    height: 250px;
+
+    left: 25px;
+    top: 25px;
+
+    border-radius: 50%;
+
+    background-color: white;
+}
+
+
+
+#needle {
+    position: absolute;
+
+    width: 5px;
+    height: 115px;
+
+    left: 50%;
+    bottom: 25px;
+
+    transform: translateX(-50%) rotate(0deg);
+    transform-origin: 50% 100%;
+
+    background-color: #888;
+
+    border-radius: 5px 5px 2px 2px;
+
+    z-index: 4;
+
+    transition: 
+        transform 120ms ease-out,
+        background-color 120ms linear;
+}
+
+
+
+#gaugeCenter {
+    position:absolute;
+
+    width: 24px;
+    height: 24px;
+
+    left: 50%;
+    bottom: 13px;
+
+    transform: translateX(-50%);
+
+    background-color: #333;
+
+    border: 5px solid white;
+    border-radius: 50%;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+
+    z-index: 5;
+}
+
+
+
+.gaugeLabel {
+    position: absolute;
+
+    font-size: 13px;
+    font-weight: bold;
+
+    color: #555;
+
+    z-index: 6;
+}
+
+
+
+.labelLeft {
+    left: 0;
+    bottom: 4px;
+}
+
+
+
+.labelLeftCenter {
+    left: 48px;
+    bottom: 100px;
+}
+
+
+
+.labelTop {
+    left: 50%;
+    top: 0;
+
+    transform: translateX(-50%);
+}
+
+
+
+.labelRightCenter {
+    right: 43px;
+    bottom: 100px;
+}
+
+
+
+.labelRight {
+    right: 0px;
+    bottom: 4px;
+}
+
+
+
+#currentNote {
+    margin: 15px 0 4px;
+
+    font-size: clamp(42px, 12vw, 70px);
+    font-weight: bold;
+
+    color: #888;
+}
+
+
+
+#currentFrequency,
+#currentCents {
+    margin: 6px 0;
+
+    color: var(--text-secondary);
+}
+
+
+
+#tunerModeOptions {
+    display: grid;
+
+    gap: 12px;
+
+    margin-top: 20px;
+}
+
+
+
+.tunerModeOption {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+
+    text-align: left;
+}
+
+
+
+.tunerModeOption span {
+    margin-top: 4px;
+
+    font-size: 13px;
+    font-weight: normal;
+
+    opacity: 0.85;
+}
+
+
+
+#instrumentStrings {
+    display: grid;
+
+    gap: 10px;
+
+    margin: 24px 0;
+}
+
+
+
+.instrumentString {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+
+    gap: 14px;
+
+    margin: 0;
+
+    color: var(--text-primary);
+
+    background-color: #f5f5f5;
+
+    border: 2px solid transparent;
+
+    box-shadow: none;
+}
+
+
+
+.instrumentString.selected {
+    color: var(--sesi-red);
+
+    background-color: #fff1f2;
+
+    border-color: var(--sesi-red);
+}
+
+
+
+.stringNote {
+    width: 34px;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    text-align: left;
+}
+
+
+
+.stringLine {
+    flex: 1;
+
+    min-height: 2px;
+
+    background-color: currentColor;
+
+    border-radius: 999px;
+}
+
+
+
+.stringRow {
+    display: grid;
+
+    grid-template-columns: minmax(0, 1fr) auto;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+
+.stringRepeatButton {
+    display: grid;
+
+    place-items: center;
+
+    width: 48px;
+    height: 48px;
+
+    padding: 0;
+    margin: 0;
+
+    font-size: 23px;
+
+    color: var(--sesi-red);
+
+    background-color: white;
+
+    border: 2px solid var(--sesi-red);
+    border-radius: 50%;
+
+    box-shadow: none;
+}
+
+
+
+.stringRepeatButton.active {
+    color: white;
+
+    background-color: var(--sesi-red);
+}
+
+
+
+.stringRepeatButton[hidden] {
+    display: none;
+}
+
+
+
+/*CONTROLE DE ELEMENTOS ESCONDIDOS*/
+[hidden] {
+    display: none !important;
+}
+
+
+
+/*BARRA SUPERIOR DO AFINADOR*/
+#tunerTopBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+
+
+#tunerTopBar button {
+    margin: 0;
+}
+
+
+
+#openSettings {
+    color: var(--sesi-red);
+
+    background-color: transparent;
+
+    border: 1px solid var(--sesi-red);
+
+    box-shadow: none;
+}
+
+
+
+#openSettings:hover {
+    color: white;
+
+    background-color: var(--sesi-red);
+}
+
+
+
+/*FUNDO DA JANELA DE CONFIGURAÇÕES*/
+.settingsOverlay {
+    position: fixed;
+
+    inset: 0;
+
+    display: grid;
+    place-items: center;
+
+    padding: 20px;
+
+    background-color: rgba( 0, 0, 0, 0.5);
+
+    z-index: 1000;
+
+    overflow-y: auto;
+}
+
+
+
+/*JANELA DE CONFIGURAÇÕES*/
+.settingsDialog {
+    width: min(480px, 100%);
+
+    max-height: calc(100vh - 40px);
+
+    overflow-y: auto;
+
+    text-align: left;
+
+    background-color: white;
+
+    border-radius: 22px;
+
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+
+
+/*CABEÇALHO DAS CONFIGURAÇÕES*/
+.settingsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 16px;
+
+    padding: 20px 22px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+
+
+.settingsHeader h2 {
+    margin: 0;
+
+    font-size: 22px;
+}
+
+
+
+.closeSettingsButton {
+    display: grid;
+    place-items: center;
+    
+    width: 40px;
+    height: 40px;
+
+    padding: 0;
+    margin: 0;
+
+    font-size: 30px;
+    font-weight: normal;
+    line-height: 1;
+
+    color: var(--text-secondary);
+
+    background-color: transparent;
+
+    border-radius: 50%;
+
+    box-shadow: none;
+}
+
+
+
+.closeSettingsButton:hover:not(:disabled) {
+    color: white;
+
+    background-color: var(--sesi-red);
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+
+/*CONTEÚDO DAS CONFIGURAÇÕES*/
+.settingsContent {
+    display: grid;
+
+    gap: 16px;
+
+    padding: 22px;
+}
+
+
+
+.settingsGroup {
+    display: grid;
+
+    gap: 12px;
+
+    margin: 0;
+    padding: 16px;
+
+    background-color: #f7f7f7;
+
+    border: 1px solid #e5e5e5;
+    border-radius: 14px;
+}
+
+
+
+.settingsGroup legend {
+    padding: 0 6px;
+
+    font-weight: bold;
+
+    color: var(--text-primary);
+}
+
+
+
+.settingsGroup > label:first-child {
+    font-weight: bold;
+}
+
+
+
+/*OPÇÕES DE RÁDIO*/
+.settingsOption {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    cursor: pointer;
+}
+
+
+
+.settingsOption input {
+    width: 18px;
+    height: 18px;
+
+    margin: 0;
+
+    accent-color: var(--sesi-red);
+}
+
+
+
+/*CONTROLE NUMÉRICO*/
+.settingsNumberControl {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+
+#settingsReference {
+    width: 90px;
+
+    padding: 9px;
+
+    font-size: 16px;
+
+    text-align: center;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+}
+
+
+
+/*OPÇÕES COM CHECKBOX*/
+.settingsSwitchOption {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 20px;
+
+    cursor: pointer;
+}
+
+
+
+.settingsSwitchOption span {
+    font-weight: bold;
+}
+
+
+
+.settingsSwitchOption input {
+    width: 20px;
+    height: 20px;
+
+    margin: 0;
+
+    accent-color: var(--sesi-red);
+}
+
+
+
+/*AJUSTES PARA CELULAR*/
+@media (max-width: 500px) {
+
+    #tunerTopBar {
+        align-items: stretch;
+    }
+
+    #tunerTopBar button {
+        padding: 10px 14px;
+
+        font-size: 13px;
+    }
+
+
+
+    .settingsOverlay {
+        align-items: end;
+
+        padding: 0;
+    }
+
+
+
+    .settingsDialog {
+        width: 100%;
+
+        max-height: 90vh;
+
+        border-radius: 22px 22px 0 0;
+    }
+
+    
+
+    .settingsContent {
+        padding: 16px;
+    }
+}
+
+
+
+body.settings-open {
+    overflow: hidden;
+}

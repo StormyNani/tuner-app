@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SESI Tuner</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+   <!-- <img src="" alt="Logo do SESI Tuner"> -->
+
+    <h1>SESI Tuner</h1>
+
+</header>
+
+
+
+<main>
+
+
+    <div id="menu">
+
+        <button id="tunerButton">
+            Afinador
+        </button>
+
+
+        <button disabled>
+            Metrônomo (em breve)
+        </button>
+
+    </div>
+
+
+
+    <div id="tunerModeMenu" hidden>
+
+        <button id="backToMainMenu">
+            Voltar
+        </button>
+
+        <h2>Escolha o afinador</h2>
+
+        <div id="tunerModeOptions">
+
+            <button
+                class="tunerModeOption"
+                data-mode="chromatic"
+            >
+                <strong>Afinador cromático</strong>
+                <span>Detecta qualquer nota automaticamente</span>
+            </button>
+
+            <button
+                class="tunerModeOption"
+                data-mode="guitar"
+            >
+                <strong>Afinador de violão</strong>
+                <span>Afinação padrão de seis cordas</span>
+            </button>
+
+            <button 
+                class="tunerModeOption"
+                data-mode="ukulele"
+            >
+                <strong>Afinador de ukulele</strong>
+                <span>Afinação padrão de quatro cordas</span>
+            </button>
+
+            <button
+                class="tunerModeOption"
+                data-mode="violin"
+            >
+                <strong>Afinador de violino</strong>
+                <span>Afinação padrão de quatro cordas</span>
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <div id="tuner" hidden>
+
+        <div id="tunerTopBar">
+
+            <button id="backToMenu">
+                Voltar
+            </button>
+
+            <button id="openSettings"
+                    type="button"
+                    aria-label="Abrir configurações"
+                    aria-haspopup="dialog"
+                    aria-controls="settingsModal"
+                    aria-expanded="false"
+                >
+                    ⚙ Configurações
+            </button>
+
+        </div>
+      
+
+        <h2 id="tunerTitle">Afinador</h2>
+
+
+        <div id="tunerMeter">
+
+            <div id="gaugeArc"></div>
+
+            <div id="gaugeTicks"></div>
+     
+            <div id="needle"></div>
+
+            <div id="gaugeCenter"></div>
+
+            <div class="gaugeLabel labelLeft">-50</div>
+            <div class="gaugeLabel labelLeftCenter">-25</div>
+            <div class="gaugeLabel labelTop">0</div>
+            <div class="gaugeLabel labelRightCenter">+25</div>
+            <div class="gaugeLabel labelRight">+50</div>
+        
+        </div>
+
+
+        <p id="currentNote">
+            --
+        </p>
+
+
+        <p id="tuningStatus">
+            Toque uma nota
+        </p>
+
+
+        <div id="instrumentStrings" hidden></div>
+
+
+        <p id="currentFrequency" hidden>
+            Frequência: --
+        </p>
+
+        
+        <p id="currentCents" hidden>
+            Afinação: --
+        </p>
+
+
+        <canvas id="visualizer"></canvas>
+
+
+    </div>
+
+
+</main>
+
+
+<div
+    id="settingsModal"
+    class="settingsOverlay"
+    hidden
+>
+
+
+    <section
+        class="settingsDialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="settingsTitle"
+    >
+        <div class="settingsHeader">
+
+            <h2 id="settingsTitle">
+                Configurações
+            </h2>
+
+            <button
+                id="closeSettings"
+                class="closeSettingsButton"
+                type="button"
+                aria-label="Fechar configurações"
+            >
+                ×
+            </button>
+
+        </div>
+    
+        <div class="settingsContent">
+
+            <fieldset class="settingsGroup">
+
+                <legend>
+                    Nomes das notas
+                </legend>
+
+                <label class="settingsOption">
+
+                    <input
+                        id="noteNamesLetters"
+                        type="radio"
+                        name="noteNames"
+                        value="letters"
+                        checked
+                    >
+
+                    <span>
+                        Letras: C, D, E
+                    </span>
+
+                </label>
+
+
+                <label class="settingsOption">
+
+                    <input
+                        id="noteNameSolfege"
+                        type="radio"
+                        name="noteNames"
+                        value="solfege"
+                    >
+
+                    <span>
+                        Dó, Ré, Mi
+                    </span>
+
+                </label>
+
+            </fieldset>
+
+
+            <fieldset class="settingsGroup">
+
+                <legend>
+                    Acidentes musicais
+                </legend>
+
+
+                <label class="settingsOption">
+
+                    <input
+                        id="accidentalsSharps"
+                        type="radio"
+                        name="accidentals"
+                        value="sharps"
+                        checked
+                    >
+
+
+                    <span>
+                        Sustenidos ♯
+                    </span>
+
+                </label>
+
+
+                <label class="settingsOption">
+
+                    <input
+                        id="accidentalsFlats"
+                        type="radio"
+                        name="accidentals"
+                        value="flats"
+                    >
+
+
+                    <span>
+                        Bemóis ♭
+                    </span>
+
+                </label>
+
+            </fieldset>
+
+            <div class="settingsGroup">
+
+                <label for="settingsReference">
+                    Lá de referência
+                </label>
+
+
+                <div class="settingsNumberControl">
+
+                    <input
+                        id="settingsReference"
+                        type="number"
+                        min="432"
+                        max="446"
+                        step="1"
+                        value="442"
+                    >
+
+
+                    <span>
+                        Hz
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="settingsGroup">
+
+                <label class="settingsSwitchOption">
+
+                    <span>
+                        Mostrar frequência e cents
+                    </span>
+
+                    
+                    <input
+                        id="showTechnicalInfo"
+                        type="checkbox"
+                    >
+
+                </label>
+
+            </div>
+
+
+            <div class="settingsGroup">
+
+                <label class="settingsSwitchOption">
+
+                    <span>
+                        Sons de referência
+                    </span>
+
+
+                    <input
+                        id="referenceSoundsEnabled"
+                        type="checkbox"
+                        checked
+                    >
+
+                </label>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<footer>
+
+    <p>
+        Desenvolvido para o SESI
+    </p>
+
+</footer>
+
+
+
+<script 
+    type="module"
+    src="js/main.js"
+    ></script>
+
+</body>
+
+</html>
