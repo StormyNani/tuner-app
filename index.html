@@ -36,8 +36,8 @@
         </button>
 
 
-        <button disabled>
-            Metrônomo (em breve)
+        <button id="metronomeButton" type="button">
+            Metrônomo
         </button>
 
     </div>
@@ -86,6 +86,30 @@
                 <span>Afinação padrão de quatro cordas</span>
             </button>
 
+            <button
+                class="tunerModeOption"
+                data-mode="viola"
+            >
+                <strong>Afinador de viola</strong>
+                <span>Afinação padrão da viola de arco</span>
+            </button>
+
+            <button
+                class="tunerModeOption"
+                data-mode="cello"
+            >
+                <strong>Afinador de violoncelo</strong>
+                <span>Afinação padrão de quatro cordas</span>
+            </button>
+
+            <button
+                class="tunerModeOption"
+                data-mode="doubleBass"
+            >
+                <strong>Afinador de contrabaixo</strong>
+                <span>Afinação padrão de quatro cordas</span>
+            </button>
+
         </div>
 
     </div>
@@ -121,16 +145,10 @@
             <div id="gaugeArc"></div>
 
             <div id="gaugeTicks"></div>
-     
+
             <div id="needle"></div>
 
             <div id="gaugeCenter"></div>
-
-            <div class="gaugeLabel labelLeft">-50</div>
-            <div class="gaugeLabel labelLeftCenter">-25</div>
-            <div class="gaugeLabel labelTop">0</div>
-            <div class="gaugeLabel labelRightCenter">+25</div>
-            <div class="gaugeLabel labelRight">+50</div>
         
         </div>
 
@@ -162,6 +180,585 @@
 
 
     </div>
+
+
+    <div id="metronome" hidden>
+
+        <div id="metronomeTopBar">
+
+            <button 
+                id="backFromMetronome" 
+                type="button"
+            >
+                Voltar
+            </button>
+
+            <button 
+                id="openMetronomeSettings"
+                type="button"
+                aria-label="Abrir configurações do metrônomo"
+                aria-haspopup="dialog"
+                aria-controls="metronomeSettingsModal"
+                aria-expanded="false"
+            >
+                ⚙ Configurações
+            </button>
+
+        </div>
+
+
+        <h2>
+            Metrônomo
+        </h2>
+
+
+        <!-- BARRAS DOS TEMPOS -->
+
+        <div
+            id="metronomeBeatIndicator"
+            role="group"
+            aria-label="Indicador dos tempos"
+        >
+        </div>
+
+
+        <p id="metronomeBeatHelp">
+            Clique em uma barra para alterar:
+            forte, meio forte, fraco ou silêncio.
+        </p>
+
+
+        <!-- BPM -->
+
+        <div id="metronomeBpmAdjust">
+
+            <button
+                id="decreaseMetronomeBpm"
+                class="metronomeBpmStepButton"
+                type="button"
+                aria-label="Diminuir BPM"
+            >
+                -
+            </button>
+
+            <div id="metronomeBpmDisplay">
+
+                <span id="metronomeBpmValue">
+                    100
+                </span>
+
+                <span id="metronomeBpmLabel">
+                    BPM
+                </span>
+
+            </div>
+
+            <button
+                id="increaseMetronomeBpm"
+                class="metronomeBpmStepButton"
+                type="button"
+                aria-label="Aumentar BPM"
+            >
+                +
+            </button>
+
+        </div>
+
+        <P id="metronomeTempoName">
+            Andante
+        </P>
+
+
+
+        <button
+            id="toggleMetronome"
+            type="button"
+            aria-pressed="false"
+        >
+            Iniciar
+        </button>
+       
+        
+        <p id="metronomeStatus">
+            Tempos: 4
+        </p>
+
+
+
+        <!-- SLIDER DO BPM -->
+
+        <div id="metronomeBpmControl">
+
+            <label for="metronomeBpm">
+                Velocidade
+            </label>
+
+            <input
+                id="metronomeBpm"
+                type="range"
+                min="40"
+                max="240"
+                step="1"
+                value="100"
+            >
+
+            <div id="metronomeBpmLimits">
+
+                <span>
+                    40
+                </span>
+
+                <span>
+                    240
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- TAP TEMPO -->
+
+        <div id="tapTempoArea">
+
+            <button
+                id="toggleTapTempo"
+                type="button"
+                aria-expanded="false"
+                aria-controls="tapTempoPanel"
+            >
+                Tap Tempo
+            </button>
+
+
+            <div
+                id="tapTempoPanel"
+                hidden
+            >
+
+                <p id="tapTempoTitle">
+                    Toque acompanhando o ritmo
+                </p>
+
+
+                <button
+                    id="tapTempoButton"
+                    type="button"
+                >
+                    TAP
+                </button>
+
+
+                <p id="tapTempoInfo">
+                    Faça pelo menos 2 toques
+                </p>
+
+            </div>
+
+        </div>
+       
+
+
+        <!-- QUANTIDADE DE TEMPOS -->
+
+        <div id="metronomeBeatsControl">
+
+            <div id="metronomeBeatsHeader">
+
+                <label for="metronomeBeats">
+                    Tempos
+                </label>
+
+                <span id="metronomeBeatsText">
+                    <strong id="metronomeBeatsValue">
+                        4
+                    </strong>
+                </span>
+
+            </div>
+
+            <input
+                id="metronomeBeats"
+                type="range"
+                min="1"
+                max="16"
+                step="1"
+                value="4"
+            >
+
+            <div id="metronomeBeatsLimits">
+
+                <span> 
+                    1
+                </span>
+
+                <span>
+                    16
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+
+        <!-- CONTROLES RÍTMICOS -->
+
+         <div id="metronomeRhythmArea">
+
+            <div id="metronomeRhythmControls">
+
+                <!-- SUBDIVISÃO -->
+
+                <button 
+                    id="subdivisionButton"
+                    class="metronomeRhythmButton"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="subdivisionPanel"
+                >
+                
+                    <span
+                        id="subdivisionButtonSymbol"
+                        class="metronomeRhythmSymbol"
+                    >
+                        ♩
+                    </span>
+
+                    <span class="metronomeRhythmButtonText">
+
+                        <strong>
+                            Subdivisão 
+                        </strong>
+
+                        <small id="subdivisionButtonName">
+                            Semínima
+                        </small>
+
+                    </span>
+
+                </button>
+
+
+                <!-- COMPASSO -->
+
+                <button
+                    id="timeSignatureButton"
+                    class="metronomeRhythmButton"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="timeSignaturePanel"
+                >
+        
+                    <span
+                        id="timeSignatureButtonValue"
+                        class="metronomeRhythmSymbol"
+                    >
+                        4/4
+                    </span>
+
+                    <span class="metronomeRhythmButtonText">
+
+                        <strong>
+                            Compasso
+                        </strong>
+
+                        <small>
+                            Fórmula
+                        </small>
+
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <!-- PAINEL DE SUBDIVISÕES -->
+
+            <div
+                id="subdivisionPanel"
+                class="metronomeRhythmPanel"
+                hidden
+            >
+
+                <h3>
+                  Subdivisão  
+                </h3>
+
+                <div
+                    id="subdivisionOptions"
+                    class="metronomeOptionGrid subdivisionOptionGrid"
+                >
+            
+                    <button
+                        class="metronomeRhythmOption selected"
+                        type="button"
+                        data-subdivision="1"
+                        aria-pressed="true"
+                    >
+                
+                        <span class="rhythmOptionSymbol">
+                            ♩
+                        </span>
+
+                        <span>
+                            Semínima
+                        </span>
+                    
+                    </button>
+
+
+                    <button
+                        class="metronomeRhythmOption"
+                        type="button"
+                        data-subdivision="2"
+                        aria-pressed="false"
+                    >
+                    
+                        <span class="rhythmOptionSymbol">
+                            ♫
+                        </span>
+
+                        <span>
+                            Colcheias
+                        </span>
+                    
+                    </button>
+
+
+                    <button
+                        class="metronomeRhythmOption"
+                        type="button"
+                        data-subdivision="3"
+                        aria-pressed="false"
+                    >
+
+                        <span class="rhythmOptionSymbol">
+                            3
+                        </span>
+
+                        <span>
+                            Tercinas
+                        </span>
+
+                    </button>                    
+
+
+                    <button
+                        class="metronomeRhythmOption"
+                        type="button"
+                        data-subdivision="4"
+                        aria-pressed="false"
+                    >
+
+                        <span class="rhythmOptionSymbol">
+                            ♬
+                        </span>
+
+                        <span>
+                            Semicolcheias
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="metronomeRhythmOption"
+                        type="button"
+                        data-subdivision="6"
+                        aria-pressed="false"
+                    >
+
+                        <span class="rhythmOptionSymbol">
+                            6
+                        </span>
+
+                        <span>
+                            Sextinas
+                        </span>
+
+                    </button>
+
+                </div>
+            
+            </div>
+
+
+            <!-- PAINEL DE COMPASSOS -->
+
+            <div
+                id="timeSignaturePanel"
+                class="metronomeRhythmPanel"
+                hidden
+            >
+
+                <h3>
+                    Compasso
+                </h3>
+
+
+                <div
+                    id="timeSignatureOptions"
+                    class="metronomeOptionGrid timeSignatureOptionGrid"
+                >
+
+                    <button
+                        class="metronomeRhythmOption"
+                        type="button"
+                        data-time-signature="1/4"
+                        aria-pressed="false"
+                    >
+                        1/4
+                    </button>
+
+
+                    <button
+                        class="metronomeRhythmOption"
+                        type="button"
+                        data-time-signature="2/4"
+                        aria-pressed="false"
+                    >
+                        2/4
+                    </button>
+
+
+                    <button
+                        class="metronomeRhythmOption"
+                        type="button"
+                        data-time-signature="3/4"
+                        aria-pressed="false"
+                    >
+                        3/4
+                    </button>
+
+
+                    <button
+                        class="metronomeRhythmOption selected"
+                        type="button"
+                        data-time-signature="4/4"
+                        aria-pressed="true"
+                    >
+                        4/4
+                    </button>
+
+
+                    <button
+                        class="metronomeRhythmOption"
+                        type="button"
+                        data-time-signature="5/4"
+                        aria-pressed="false"
+                    >
+                        5/4
+                    </button>
+
+
+                    <button
+                        class="metronomeRhythmOption"
+                        type="button"
+                        data-time-signature="6/4"
+                        aria-pressed="false"
+                    >
+                        6/4
+                    </button>
+
+
+                    <button
+                        class="metronomeRhythmOption"
+                        type="button"
+                        data-time-signature="3/8"
+                        aria-pressed="false"
+                    >
+                        3/8
+                    </button>
+
+
+                    <button
+                        class="metronomeRhythmOption"
+                        type="button"
+                        data-time-signature="5/8"
+                        aria-pressed="false"
+                    >
+                        5/8
+                    </button>
+
+
+                    <button
+                        class="metronomeRhythmOption"
+                        type="button"
+                        data-time-signature="6/8"
+                        aria-pressed="false"
+                    >
+                        6/8
+                    </button>
+
+
+                    <button
+                        class="metronomeRhythmOption"
+                        type="button"
+                        data-time-signature="7/8"
+                        aria-pressed="false"
+                    >
+                        7/8
+                    </button>
+
+
+                    <button
+                        class="metronomeRhythmOption"
+                        type="button"
+                        data-time-signature="9/8"
+                        aria-pressed="false"
+                    >
+                        9/8
+                    </button>
+
+
+                    <button
+                        class="metronomeRhythmOption"
+                        type="button"
+                        data-time-signature="12/8"
+                        aria-pressed="false"
+                    >
+                        12/8
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+         
+
+         <!--
+        <div
+            id="metronomeBeatIndicator"
+            role="group"
+            aria-label="Indicador dos Tempo"
+        >
+        </div>
+
+        <p id="metronomeBeatHelp">
+            Clique em uma barra para alterar:
+            forte, meio forte, fraco ou silêncio.
+        </p>
+
+
+        <button id="toggleMetronome"
+                type="button"
+                aria-pressed="false"
+        >
+            Iniciar
+        </button>
+
+
+        <p id="metronomeStatus">
+            Tempos: 4
+        </p>    
+        -->
+
+    </div>
+
 
 
 </main>
@@ -354,6 +951,94 @@
     </section>
 
 </div>
+
+
+
+<!-- CONFIGURAÇÕES DO METRÔNOMO -->
+
+<div
+    id="metronomeSettingsModal"
+    class="settingsOverlay"
+    hidden
+>
+
+    <section
+        class="settingsDialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="metronomeSettingsTitle"
+    >
+
+        <div class="settingsHeader">
+
+            <h2 id="metronomeSettingsTitle">
+                Configurações do metrônomo
+            </h2>
+
+
+            <button
+                id="closeMetronomeSettings"
+                class="closeSettingsButton"
+                type="button"
+                aria-label="Fechar configurações do metrônomo"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="settingsContent">
+
+
+            <!-- VOLUME -->
+
+            <div class="settingsGroup">
+
+                <div id="metronomeVolumeHeader">
+
+                    <label for="metronomeVolume">
+                        Volume
+                    </label>
+
+                    <strong id="metronomeVolumeValue">
+                        100%
+                    </strong>
+
+                </div>
+
+
+                <input
+                    id="metronomeVolume"
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="1"
+                    value="100"
+                >
+
+
+                <div id="metronomeVolumeLimits">
+
+                    <span>0%</span>
+
+                    <span>100%</span>
+
+                </div>
+
+
+                <p class="metronomeSettingHelp">
+                    Controla o volume dos tempos e das subdivisões.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
 
 
 <footer>

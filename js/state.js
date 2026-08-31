@@ -84,3 +84,34 @@ export const referenceSoundState = {
 
     playbackRequestId: 0
 };
+
+
+
+// ESTADO DO METRÔNOMO
+
+export const metronomeState = {
+    
+    running: false,
+
+    bpm: 100,
+
+    currentBeat: 0,
+
+    beatsPerMeasure: 4,
+
+    beatStrenghts: [],
+
+    subdivision: 1,
+
+    timeSignature: "4/4",
+
+    volume: 1,
+
+    audioContext: null,
+
+    schedulerTimerId: null,
+
+    animationFrameId: null,
+
+    nextBeatTime: 0
+};

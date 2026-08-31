@@ -27,6 +27,11 @@ import {
     closeReferenceAudio
 } from "./audio.js"; 
 
+import {
+    initializeMetronome,
+    stopMetronome
+} from "./metronome.js";
+
 
 
 
@@ -35,9 +40,15 @@ import {
 
 const tunerButton = document.getElementById("tunerButton");
 
+const metronomeButton = document.getElementById("metronomeButton");
+
 const menu = document.getElementById("menu");
 
 const tuner = document.getElementById("tuner");
+
+const metronome = document.getElementById("metronome");
+
+const backFromMetronome = document.getElementById("backFromMetronome");
 
 const backToMenu = document.getElementById("backToMenu");
 
@@ -48,6 +59,10 @@ const currentFrequency = document.getElementById("currentFrequency");
 const currentCents = document.getElementById("currentCents");
 
 const needle = document.getElementById("needle");
+
+const tunerMeter = document.getElementById("tunerMeter");
+
+const gaugeTicks = document.getElementById("gaugeTicks");
 
 const canvas = document.getElementById("visualizer");
 
@@ -92,6 +107,13 @@ applyTechnicalInfoVisibility();
 canvas.width = 300;
 canvas.height = 100;
 
+initializeMetronome();
+
+window.addEventListener("resize", function () {
+
+    createGaugeScale();
+});
+
 
 
 
@@ -100,7 +122,11 @@ canvas.height = 100;
 
 tunerButton.addEventListener("click", showTunerModeMenu);
 
+metronomeButton.addEventListener("click", showMetronome);
+
 backToMainMenu.addEventListener("click", showMainMenu);
+
+backFromMetronome.addEventListener("click", showMainMenu);
 
 backToMenu.addEventListener("click", returnToTunerModes);
 
@@ -256,18 +282,40 @@ function closeSettingsModal() {
 
 //NAVEGAÇÃO
 
-function showTunerModeMenu() {
+function showMetronome() {
     menu.hidden = true;
+
+    tunerModeMenu.hidden = true;
+
     tuner.hidden = true;
 
+    metronome.hidden = false;
+}
+
+
+
+function showTunerModeMenu() {
+
+    stopMetronome();
+
+    menu.hidden = true;
+    
+    metronome.hidden = true;
+    
+    tuner.hidden = true;
     tunerModeMenu.hidden = false;
 }
 
 
 
 function showMainMenu() {
+
+    stopMetronome();
+
     tunerModeMenu.hidden = true;
     tuner.hidden = true;
+
+    metronome.hidden = true;
 
     menu.hidden = false;
 }
@@ -275,6 +323,9 @@ function showMainMenu() {
 
 
 function openTunerMode(mode) {
+
+    stopMetronome();
+
     appState.currentTunerMode = mode;
     appState.selectedString = null;
 
@@ -282,7 +333,14 @@ function openTunerMode(mode) {
     tunerModeMenu.hidden = true;
     tuner.hidden = false;
 
+    metronome.hidden = true;
+
     configureTunerMode();
+
+    requestAnimationFrame(function() {
+        
+        createGaugeScale();
+    });
 
     startTuner();
 }
@@ -290,6 +348,7 @@ function openTunerMode(mode) {
 
 
 function returnToTunerModes() {
+    
     stopTuner();
 
     appState.currentTunerMode = null;
@@ -899,6 +958,87 @@ function resetTunerDisplay() {
 
 
 
+function createGaugeScale() {
+
+    const meterWidth = tunerMeter.clientWidth;
+
+    const meterHeight = tunerMeter.clientHeight;
+
+    if (meterWidth <= 0 || meterHeight <= 0) {
+        
+        return;
+    }
+
+    gaugeTicks.innerHTML = "";
+    
+    /*Centro de rotação da agulha*/
+
+    const centerX = meterWidth / 2;
+
+    const centerY = meterHeight - 25;
+
+
+    /*Distância das marcações em relação ao centro*/
+
+    const tickRadius = Math.min(138, meterWidth / 2 - 25);
+
+    const labelRadius = Math.min(168, meterWidth / 2 - 15);
+
+
+    /*RISQUINHOS: um a cada 5 cents*/
+
+    for (let cents = -50; cents <= 50; cents += 5) {
+        
+        const angleDegrees = (cents / 50) * 90;
+
+        const angleRadians = angleDegrees * Math.PI / 180;
+
+        const x = centerX + Math.sin(angleRadians) * tickRadius;
+
+        const y = centerY - Math.cos(angleRadians) * tickRadius;
+
+        const tick = document.createElement("span");
+
+        tick.className = cents % 10 === 0 ? "gaugeTick gaugeTickMajor" : "gaugeTick";
+
+        tick.style.left = x + "px";
+
+        tick.style.top = y + "px";
+
+        tick.style.transform = "translate(-50%, -50%) " + "rotate(" + angleDegrees + "deg)";
+
+        gaugeTicks.appendChild(tick);
+    }
+
+
+    /*NÚMEROS: um a cada 10 cents*/
+
+    for ( let cents = -50; cents <= 50; cents += 10) {
+        
+        const angleDegrees = (cents / 50) * 90;
+
+        const angleRadians = angleDegrees * Math.PI / 180;
+
+        const x = centerX + Math.sin(angleRadians) * labelRadius;
+
+        const y = centerY - Math.cos(angleRadians) * labelRadius;
+
+        const label = document.createElement("span");
+
+        label.className = "gaugeLabel";
+
+        label.textContent = cents > 0 ? "+" + cents : String(cents);
+
+        label.style.left = x + "px";
+
+        label.style.top = y + "px";
+
+        gaugeTicks.appendChild(label);
+    }
+}
+
+
+
 function updateNeedle(cents) {
     const limitedCents = Math.max(-50, Math.min(50, cents));
 
@@ -971,3 +1111,4 @@ function updateTuningStatus(cents) {
         tuningStatus.className = "almost-tuned";
     }
 }
+

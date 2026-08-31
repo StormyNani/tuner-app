@@ -75,5 +75,38 @@ export const TUNER_MODES = {
             { name: "D4", noteNumber: 62, thickness: 4, audioPath: null },
             { name: "G3", noteNumber: 55, thickness: 5, audioPath: null }
         ]
+    },
+
+    viola: {
+        title: "Afinador de viola",
+
+        strings: [
+            { name: "A4", noteNumber: 69, thickness: 2, audioPath: null },
+            { name: "D4", noteNumber: 62, thickness: 3, audioPath: null },
+            { name: "G3", noteNumber: 55, thickness: 4, audioPath: null },
+            { name: "C3", noteNumber: 48, thickness: 5, audioPath: null }
+        ]
+    },
+
+    cello: {
+        title: "Afinador de violoncelo",
+
+        strings: [
+            { name: "A3", noteNumber: 57, thickness: 3, audioPath: null },
+            { name: "D3", noteNumber: 50, thickness: 4, audioPath: null },
+            { name: "G2", noteNumber: 43, thickness: 5, audioPath: null },
+            { name: "C2", noteNumber: 36, thickness: 7, audioPath: null }
+        ]
+    },
+
+    doubleBass: {
+        title: "Afinador de contrabaixo",
+
+        strings: [
+            { name: "G2", noteNumber: 43, thickness: 4, audioPath: null },
+            { name: "D2", noteNumber: 38, thickness: 5, audioPath: null },
+            { name: "A1", noteNumber: 33, thickness: 6, audioPath: null },
+            { name: "E1", noteNumber: 28, thickness: 8, audioPath: null }
+        ]
     }
 };

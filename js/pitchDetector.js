@@ -339,3 +339,4 @@ export function stabilizeNoteChange(frequency) {
 
     return (pitchState.acceptedNoteFrequency);
 }
+

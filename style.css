@@ -112,7 +112,7 @@ button:active:not(:disabled) {
 
 
 
-#backToMenu {
+#backToMenu, #backFromMetronome {
     color: var(--sesi-red);
 
     background-color: transparent;
@@ -124,7 +124,7 @@ button:active:not(:disabled) {
 
 
 
-#tuner {
+#tuner, #metronome {
 
     margin-top: 10px;
 
@@ -168,8 +168,8 @@ footer {
 
     position: relative;
 
-    width: min(340px, 90vw);
-    height: 190px;
+    width: min(380px, 90vw);
+    height: 210px;
 
     margin: 35px auto 20px;
 
@@ -240,7 +240,7 @@ button:disabled {
     height: 150px;
 
     left: 50%;
-    bottom: 15px;
+    bottom: 25px;
 
     transform: translateX(-50%);
 
@@ -346,49 +346,56 @@ button:disabled {
 .gaugeLabel {
     position: absolute;
 
-    font-size: 13px;
-    font-weight: bold;
+    transform: translate(-50%, -50%);
 
-    color: #555;
+    font-size: 14px;
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    color: #444;
+
+    z-index: 7;
+
+    pointer-events: none;
+}
+
+
+
+#gaugeTicks {
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
 
     z-index: 6;
 }
 
 
+.gaugeTick {
+    position: absolute;
 
-.labelLeft {
-    left: 0;
-    bottom: 4px;
+    width: 2px;
+    height: 7px;
+
+    background-color: #777;
+
+    border-radius: 2px;
+
+    transform-origin: center;
+
+    opacity: 0.75;
 }
 
 
+.gaugeTickMajor {
+    width:  3px;
+    height: 12px;
 
-.labelLeftCenter {
-    left: 48px;
-    bottom: 100px;
-}
+    background-color: #444;
 
-
-
-.labelTop {
-    left: 50%;
-    top: 0;
-
-    transform: translateX(-50%);
-}
-
-
-
-.labelRightCenter {
-    right: 43px;
-    bottom: 100px;
-}
-
-
-
-.labelRight {
-    right: 0px;
-    bottom: 4px;
+    opacity: 1;
 }
 
 
@@ -841,6 +848,33 @@ button:disabled {
 
 
 
+    #metronomeBpmAdjust {
+        grid-template-columns: auto minmax(100px, 1fr) auto;
+
+        gap: 10px;
+    }
+
+
+
+    #metronomeBeatIndicator {
+        height: 150px;
+
+        gap: 5px;
+
+        padding: 14px 14px 36px;
+    }
+
+
+
+    .metronomeBpmStepButton {
+        width: 48px;
+        height: 48px;
+
+        font-size: 29px;
+    }
+
+
+
     .settingsOverlay {
         align-items: end;
 
@@ -862,10 +896,863 @@ button:disabled {
     .settingsContent {
         padding: 16px;
     }
+
+
+
+    #metronomeRhythmControls {
+        gap: 8px;
+    }
+
+
+    .metronomeRhythmButton {
+        gap: 8px;
+
+        padding: 10px 9px;
+    }
+
+
+    .metronomeRhythmSymbol {
+        min-width: 32px;
+
+        font-size: 22px;
+    }
+
+
+    .subdivisionOptionGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+
+    .timeSignatureOptionGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+        
 }
 
 
 
 body.settings-open {
     overflow: hidden;
+}
+
+
+
+/*METRÔNOMO*/
+
+#metronomeTopBar {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+
+
+#metronomeTopBar button {
+    margin: 0;
+}
+
+
+
+#openMetronomeSettings {
+    color: var(--sesi-red);
+
+    background-color: transparent;
+
+    border: 1px solid var(--sesi-red);
+
+    box-shadow: none;
+}
+
+
+
+#openMetronomeSettings:hover:not(:disabled) {
+    color: white;
+    
+    background-color: var(--sesi-red);
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+
+#metronome h2 {
+    margin-top: 0;
+}
+
+
+
+/* CONTROLE PRINCIPAL DO BPM */
+#metronomeBpmAdjust {
+    display: grid;
+
+    grid-template-columns:auto minmax(140px, 1fr) auto;
+
+    align-items: center;
+
+    gap: 18px;
+
+    width: min(420px, 100%);
+
+    margin: 30px auto 8px;
+}
+
+
+
+.metronomeBpmStepButton {
+    display: grid;
+    place-items: center;
+
+    width: 58px;
+    height: 58px;
+
+    padding: 0;
+    margin: 0;
+
+    font-size: 34px;
+    font-weight: normal;
+    line-height: 1;
+
+    color: var(--sesi-red);
+
+    background-color: white;
+
+    border: 2px solid var(--sesi-red);
+    border-radius: 50%;
+
+    box-shadow: none;
+}
+
+
+
+.metronomeBpmStepButton:hover:not(:disabled) {
+    color: white;
+
+    background-color: var(--sesi-red);
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+
+.metronomeBpmStepButton:disabled {
+    opacity: 0.35;
+}
+
+
+
+#metronomeTempoName {
+    min-height: 26px;
+
+    margin: 0 0 24px;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    color: var(--text-secondary);
+}
+
+
+/*VALOR PRINCIPAL DO BPM*/
+#metronomeBpmDisplay {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+
+    gap: 8px;
+
+    margin: 0;
+}
+
+
+
+#metronomeBpmValue {
+    font-size: clamp(54px, 15vw, 82px);
+
+    font-weight: bold;
+
+    line-height: 1;
+
+    color: var(--sesi-red);
+}
+
+
+
+#metronomeBpmLabel {
+    font-size: 18px;
+    font-weight: bold;
+
+    color: var(--text-secondary);
+}
+
+
+
+/*CONTROLE DE BPM*/
+#metronomeBpmControl {
+    display: grid;
+
+    gap: 12px;
+
+    margin: 28px auto;
+
+    width: min(400px, 100%);
+}
+
+
+
+#metronomeBpmControl label {
+    justify-self: start;
+    
+    font-weight: bold;
+
+    text-align: left;
+}
+
+
+
+#metronomeBpm {
+    width: 100%;
+
+    margin: 0;
+
+    accent-color: var(--sesi-red);
+
+    cursor: pointer;
+}
+
+
+
+#metronomeBpmLimits {
+    display: flex;
+    justify-content: space-between;
+
+    font-size: 13px;
+
+    color: var(--text-secondary);
+}
+
+
+
+/*INDICADORES DOS TEMPOS*/
+#metronomeBeatsControl {
+    display: grid;
+
+    gap: 10px;
+
+    width: min(420px, 100%);
+
+    margin: 28px auto;
+}
+
+
+
+#metronomeBeatsHeader {
+    position: relative;
+    
+    display: flex;
+    align-items: center;
+
+    min-height: 38px;
+}
+
+
+
+#metronomeBeatsHeader label {
+    font-weight: bold;
+
+    align-self: flex-start;
+}
+
+
+
+#metronomeBeatsText {
+    position: absolute;
+
+    left: 50%;
+    bottom: 0;
+
+    transform: translateX(-50%);
+}
+
+
+
+#metronomeBeatsValue {
+    font-size: 20px;
+    
+    color: var(--sesi-red);
+}
+
+
+
+#metronomeBeats {
+    width: 100%;
+
+    margin: 0;
+
+    cursor: pointer;
+
+    accent-color: var(--sesi-red);
+}
+
+
+
+#metronomeBeatsLimits {
+    display: flex;
+    justify-content: space-between;
+
+    font-size: 13px;
+
+    color: var(--text-secondary);
+}
+
+
+
+/* BARRAS DOS TEMPOS */
+
+#metronomeBeatIndicator {
+    display: grid;
+
+    grid-template-columns: 
+        repeat(
+            var(--beat-count, 4),
+            minmax(8px, 1fr)
+        );
+    
+    align-items: end;
+
+    gap: clamp(5px, 1.5vw, 12px);
+
+    width: min(460px, 100%);
+    height: 180px;
+
+    margin: 32px auto;
+
+    padding: 18px 18px 42px;
+
+    background-color: #f7f7f7;
+
+    border: 1px solid #e5e5e5;
+    border-radius: 18px;
+}
+ 
+
+
+.metronomeBeat {
+    appearance: none;
+
+    align-self: end;
+
+    min-width: 0;
+    width: 100%;
+
+    padding: 0;
+    margin: 0;
+
+    border: none;
+    border-radius: 12px 12px 5px 5px;
+
+    box-shadow: none;
+
+    cursor: pointer;
+
+    position: relative;
+
+    transition: 
+        height 160ms ease,
+        transform 100ms ease,
+        background-color 120ms ease,
+        opacity 120ms ease,
+        filter 120ms ease;
+}
+
+
+
+.metronomeBeat:hover:not(:disabled) {
+    transform: none;
+    
+    box-shadow: none;
+
+    filter: brightness(0.94);
+}
+
+
+
+/* FORTE */
+
+.metronomeBeat.strength-strong {
+    height: 100%;
+
+    background-color: #e74c3c;
+}
+
+
+
+.metronomeBeat.strength-strong.active {
+    outline-color: #a90f15;
+}
+
+
+
+/* MEIO FORTE */
+
+.metronomeBeat.strength-medium {
+    height: 78%;
+
+    background-color: #f1c40f;
+}
+
+
+
+.metronomeBeat.strength-medium.active {
+    outline-color: #c59b00;
+}
+
+
+
+/* FRACO */
+
+.metronomeBeat.strength-weak {
+    height: 55%;
+
+    background-color: #2ecc71;
+}
+
+
+
+.metronomeBeat.strength-weak.active {
+    outline-color: #1e8449;
+}
+
+
+
+/* SILENCIOSO */
+
+.metronomeBeat.strength-silent {
+    height: 28%;
+
+    background-color: white;
+
+    border: 2px dashed #aaaaaa;
+
+    opacity: 1;
+}
+
+
+
+.metronomeBeat.strength-silent.active {
+    outline-color: #777777;
+}
+
+
+
+/* NÚMERO DOS TEMPOS */
+
+.metronomeBeat::after {
+    content: attr(data-beat-number);
+
+    position: absolute;
+
+    left: 50%;
+    bottom: -29px;
+
+    transform: translateX(-50%);
+
+    font-size: clamp(10px, 2vw, 13px);
+
+    font-weight: bold;
+
+    line-height: 1;
+
+    color: var(--text-secondary);
+
+    pointer-events: none;
+}
+
+
+/* TEMPO SENDO TOCADO */
+
+.metronomeBeat.active {
+    outline-width: 3px;
+    outline-style: solid;
+
+    outline-offset: 3px;
+
+    filter: brightness(1.08);
+}
+
+
+
+.metronomeBeat.active::after {
+    color: var(--text-primary);
+
+    font-weight: 900;
+}
+
+
+
+#metronomeBeatHelp {
+    margin: -20px auto 28px;
+
+    font-size: 13px;
+    
+    color: var(--text-secondary);
+}
+
+
+
+/*BOTÃO E STATUS*/
+#toggleMetronome {
+    margin: 10px auto 24px;
+
+    /*min-width: 130px;*/
+}
+
+
+
+#metronomeStatus {
+    min-height: 22px;
+
+    margin: 14px 0 0;
+
+    color: var(--text-secondary);
+}
+
+
+#toggleMetronome.active {
+    background-color: #333333;
+
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.22);
+}
+
+
+
+#toggleMetronome.active:hover {
+    background-color: #111111;
+}
+
+
+
+/* CONTROLES RÍTMICOS */
+
+#metronomeRhythmArea {
+    width: min(420px, 100%);
+
+    margin: 28px auto;
+}
+
+
+#metronomeRhythmControls {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+
+
+.metronomeRhythmButton {
+    display: grid;
+
+    grid-template-columns: auto minmax(0, 1fr);
+
+    align-items: center;
+
+    gap: 12px;
+
+    width: 100%;
+
+    min-height: 70px;
+
+    padding: 12px 14px;
+    margin: 0;
+
+    text-align: left;
+
+    color: var(--text-primary);
+
+    background-color: white;
+
+    border: 2px solid var(--border);
+
+    border-radius: 14px;
+
+    box-shadow: none;
+}
+
+
+
+.metronomeRhythmButton:hover:not(:disabled) {
+    color: var(--text-primary);
+
+    background-color: #fff7f7;
+
+    border-color: var(--sesi-red);
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+
+.metronomeRhythmSymbol {
+    min-width: 42px;
+
+    font-size: 27px;
+    font-weight: bold;
+
+    text-align: center;
+
+    color: var(--sesi-red);
+}
+
+
+
+.metronomeRhythmButtonText {
+    display: grid;
+
+    gap: 3px;
+}
+
+
+
+.metronomeRhythmButtonText strong {
+    font-size: 15px;
+}
+
+
+
+.metronomeRhythmButtonText small {
+    font-size: 12px;
+    font-weight: normal;
+
+    color: var(--text-secondary);
+}
+
+
+
+/* PAINÉIS RÍTMICOS */
+
+.metronomeRhythmPanel {
+    margin-top: 12px;
+
+    padding: 16px;
+
+    text-align: left;
+
+    background-color: #f7f7f7;
+
+    border: 1px solid #e5e5e5;
+
+    border-radius: 14px;
+}
+
+
+.metronomeRhythmPanel h3 {
+    margin: 0 0 14px;
+
+    font-size: 16px;
+}
+
+
+
+.metronomeOptionGrid {
+    display: grid;
+
+    gap: 8px;
+}
+
+
+
+.subdivisionOptionGrid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+
+
+.timeSignatureOptionGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+
+
+.metronomeRhythmOption {
+    display: grid;
+
+    place-items: center;
+
+    gap: 5px;
+
+    min-width: 0;
+
+    padding: 10px 6px;
+    margin: 0;
+
+    font-size: 13px;
+
+    color: var(--text-primary);
+
+    background-color: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 10px;
+
+    box-shadow: none;
+}
+
+
+
+.metronomeRhythmOption:hover:not(:disabled) {
+    color: var(--sesi-red);
+
+    background-color: #fff7f7;
+
+    border-color: var(--sesi-red);
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+
+.metronomeRhythmOption.selected {
+    color: white;
+
+    background-color: var(--sesi-red);
+
+    border-color: var(--sesi-red);
+}
+
+
+
+.rhythmOptionSymbol {
+    font-size: 23px;
+    font-weight: bold;
+}
+
+
+
+/* TAP TEMPO */
+
+#tapTempoArea {
+    width: min(420px, 100%);
+
+    margin: 20px auto;
+}
+
+
+#toggleTapTempo {
+    width: 100%;
+
+    margin: 0;
+}
+
+
+#tapTempoPanel {
+    margin-top: 12px;
+
+    padding: 18px;
+
+    background-color: #f7f7f7;
+
+    border: 1px solid #e5e5e5;
+    border-radius: 14px;
+}
+
+
+#tapTempoTitle {
+    margin: 0 0 14px;
+
+    font-weight: bold;
+
+    color: var(--text-secondary);
+}
+
+
+#tapTempoButton {
+    width: min(220px, 100%);
+
+    min-height: 90px;
+
+    margin: 0;
+
+    font-size: 24px;
+
+    user-select: none;
+}
+
+
+#tapTempoInfo {
+    min-height: 20px;
+
+    margin: 14px 0 0;
+
+    font-size: 14px;
+
+    color: var(--text-secondary);
+}
+
+
+
+/* CONFIGURAÇÕES DO METRÔNOMO */
+
+#metronomeVolumeHeader {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 16px;
+}
+
+
+#metronomeVolumeHeader label {
+    font-weight: bold;
+}
+
+
+#metronomeVolumeValue {
+    color: var(--sesi-red);
+}
+
+
+#metronomeVolume {
+    width: 100%;
+
+    margin: 0;
+
+    cursor: pointer;
+
+    accent-color: var(--sesi-red);
+}
+
+
+#metronomeVolumeLimits {
+    display: flex;
+
+    justify-content: space-between;
+
+    font-size: 13px;
+
+    color: var(--text-secondary);
+}
+
+
+.metronomeSettingHelp {
+    margin: 0;
+
+    font-size: 13px;
+
+    color: var(--text-secondary);
 }
