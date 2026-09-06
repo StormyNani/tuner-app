@@ -32,6 +32,11 @@ import {
     stopMetronome
 } from "./metronome.js";
 
+import {
+    renderGuitarDiagram,
+    renderOrchestralDiagram
+} from "./instrumentDiagram.js";
+
 
 
 
@@ -369,12 +374,17 @@ function returnToTunerModes() {
 //MODOS E CORDAS DOS INSTRUMENTOS
 
 function configureTunerMode() {
+
     const mode = TUNER_MODES[appState.currentTunerMode];
 
     tunerTitle.textContent = mode.title;
 
+    /* AFINADOR CROMÁTICO NÃO POSSUI CORDAS. */
+
     if (appState.currentTunerMode === "chromatic") {
+
         instrumentStrings.innerHTML = "";
+
         instrumentStrings.hidden = true;
 
         resetTunerDisplay();
@@ -384,12 +394,117 @@ function configureTunerMode() {
 
     instrumentStrings.hidden = false;
 
+    /*NOVO LAYOUT DO VIOLÃO*/
+
+    if (mode.diagram === "guitar") {
+
+        const result = renderGuitarDiagram({
+            container: instrumentStrings,
+
+            strings: mode.strings, 
+            
+            formatFullNoteName:
+            
+            formatFullNoteName,
+
+            onSelect: function (stringData, selectedButton) {
+
+                selectInstrumentString(stringData, selectedButton, true);
+            },
+
+
+            onRepeat: function (stringData, repeatButton) {
+
+                toggleStringRepeat(stringData, repeatButton);
+            
+            }
+            
+        });
+
+        if (result !== null) {
+
+            selectInstrumentString(mode.strings[0], result.firstButton, false);
+        }
+
+        return;
+    }
+
+    /*
+    LAYOUT DOS INSTRUMENTOS
+    DE ARCO
+    */
+
+    if (
+        mode.diagram ===
+        "orchestral"
+    ) {
+
+    const result =
+        renderOrchestralDiagram({
+
+            container:
+                instrumentStrings,
+
+            strings:
+                mode.strings,
+
+            formatFullNoteName:
+                formatFullNoteName,
+
+
+            onSelect:
+                function (
+                    stringData,
+                    selectedButton
+                ) {
+
+                    selectInstrumentString(
+                        stringData,
+                        selectedButton,
+                        true
+                    );
+                },
+
+
+            onRepeat:
+                function (
+                    stringData,
+                    repeatButton
+                ) {
+
+                    toggleStringRepeat(
+                        stringData,
+                        repeatButton
+                    );
+                }
+        });
+
+
+    if (
+        result !== null
+    ) {
+
+        selectInstrumentString(
+            mode.strings[0],
+            result.firstButton,
+            false
+        );
+    }
+
+
+        return;
+    }
+
     renderInstrumentStrings(mode.strings);
 }
 
 
 
+
 function renderInstrumentStrings(strings) {
+
+    instrumentStrings.classList.remove("instrumentDiagramContainer");
+
     instrumentStrings.innerHTML = "";
 
     strings.forEach(function (stringData) {
@@ -402,6 +517,10 @@ function renderInstrumentStrings(strings) {
         stringButton.type = "button";
 
         stringButton.className = "instrumentString";
+
+        stringButton.dataset.noteNumber = String(stringData.noteNumber);
+
+        stringButton.setAttribute("aria-pressed", "false");
 
         const note = document.createElement("span");
 
@@ -422,6 +541,8 @@ function renderInstrumentStrings(strings) {
         repeatButton.type = "button";
 
         repeatButton.className = "stringRepeatButton";
+
+        repeatButton.dataset.noteNumber = String(stringData.noteNumber);
         
         repeatButton.textContent = "↻";
 
@@ -471,39 +592,88 @@ function renderInstrumentStrings(strings) {
 
 
 function selectInstrumentString(stringData, selectedButton, shouldPlaySound = true) {
+
     const isSameString = appState.selectedString !== null && appState.selectedString.noteNumber === stringData.noteNumber;
 
-    if(!isSameString) {
+    /* Mudou de corda: para uma possível repetição que estivesse acontecendo.*/
+
+    if (!isSameString) {
+        
         stopStringRepeat();
     }
 
     appState.selectedString = stringData;
 
+    /*BOTÕES DAS NOTAS*/
+
     const stringButtons = instrumentStrings.querySelectorAll(".instrumentString");
 
     stringButtons.forEach(function (button) {
-        button.classList.remove(
-            "selected"
-        );
+
+        const isSelected = button === selectedButton;
+
+        button.classList.toggle("selected", isSelected);
+
+        button.setAttribute("aria-pressed", String(isSelected));
+        
     });
+
+    /* PARTES DO SVG corda tarraxa haste da tarraxa*/
+
+    const diagramParts = instrumentStrings.querySelectorAll(".diagramStringPart");
+
+    diagramParts.forEach(function (part) {
+
+        const partNoteNumber = Number(part.dataset.noteNumber);
+
+        const isSelected = partNoteNumber === stringData.noteNumber;
+
+        part.classList.toggle("selected", isSelected);
+    });
+
+    /*ESCONDE TODOS OS BOTÕES DE REPETIÇÃO*/
 
     const repeatButtons = instrumentStrings.querySelectorAll(".stringRepeatButton");
 
-    repeatButtons.forEach(function (button) {
-        button.hidden = true;
-    });
+    repeatButtons.forEach(
+        function (button) {
+            button.hidden = true;
+        }
+    );
 
-    selectedButton.classList.add("selected");
+    /* NOVO DIAGRAMA POSSUI UM BOTÃO DE REPETIÇÃO ÚNICO */
 
-    const selectedRow = selectedButton.closest(".stringRow");
+    const diagramRepeatButton = instrumentStrings.querySelector(".diagramRepeatButton");
 
-    const selectedRepeatButton = selectedRow.querySelector(".stringRepeatButton");
+    let selectedRepeatButton = null;
 
-    selectedRepeatButton.hidden = !appState.referenceSoundEnabled;
+    if (diagramRepeatButton !== null) {
+
+        diagramRepeatButton.dataset.noteNumber = String(stringData.noteNumber);
+
+        selectedRepeatButton = diagramRepeatButton;
+
+    } else {
+
+        /* LAYOUT ANTIGO */
+
+        selectedRepeatButton = instrumentStrings.querySelector(
+            '.stringRepeatButton' +
+            '[data-note-number="' +
+            stringData.noteNumber +
+            '"]'
+        );
+    }
+
+    if (selectedRepeatButton !== null) {
+        
+        selectedRepeatButton.hidden = !appState.referenceSoundEnabled;
+    }
 
     resetTunerDisplay();
 
     if (shouldPlaySound && appState.referenceSoundEnabled) {
+
         playStringSound(stringData);
     }
 }
@@ -894,29 +1064,48 @@ function applyTechnicalInfoVisibility() {
 
 
 function updateRepeatButtonVisibility() {
+
     const repeatButtons = instrumentStrings.querySelectorAll(".stringRepeatButton");
 
+
     repeatButtons.forEach(function (button) {
+        
         button.hidden = true;
     });
 
     if (!appState.referenceSoundEnabled || appState.selectedString === null) {
-        return;
 
+        return;
     }
 
-    const selectedStringButton = instrumentStrings.querySelector(".instrumentString.selected");
+    /*DIAGRAMA VISUAL*/
 
-    if (!selectedStringButton) {
+    const diagramRepeatButton = instrumentStrings.querySelector(".diagramRepeatButton");
+
+    if (diagramRepeatButton !== null) {
+
+        diagramRepeatButton.dataset.noteNumber = String(appState.selectedString.noteNumber);
+
+        diagramRepeatButton.hidden = false;
+
         return;
-
     }
 
-    const selectedRow = selectedStringButton.closest(".stringRow");
+    /*LAYOUT ANTIGO*/
 
-    const repeatButton = selectedRow.querySelector(".stringRepeatButton");
+    const repeatButton = instrumentStrings.querySelector(
+        '.stringRepeatButton' + 
+        '[data-note-number="' + 
+        appState 
+        .selectedString 
+        .noteNumber + 
+        '"]'
+    );
 
-    repeatButton.hidden = false;
+    if (repeatButton !== null) {
+
+        repeatButton.hidden = false;
+    }
 }
 
 

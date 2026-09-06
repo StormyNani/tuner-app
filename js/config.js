@@ -45,6 +45,8 @@ export const TUNER_MODES = {
     guitar: {
         title: "Afinador de violão",
 
+        diagram: "guitar",
+
         strings: [
             { name: "E4", noteNumber: 64, thickness: 2, audioPath: null },
             { name: "B3", noteNumber: 59, thickness: 3, audioPath: null },
@@ -53,6 +55,7 @@ export const TUNER_MODES = {
             { name: "A2", noteNumber: 45, thickness: 6, audioPath: null },
             { name: "E2", noteNumber: 40, thickness: 7, audioPath: null }
         ]
+
     },
 
     ukulele: {
@@ -69,6 +72,8 @@ export const TUNER_MODES = {
     violin: {
         title: "Afinador de violino",
 
+        diagram: "orchestral",
+
         strings: [
             { name: "E5", noteNumber: 76, thickness: 2, audioPath: null },
             { name: "A4", noteNumber: 69, thickness: 3, audioPath: null },
@@ -80,6 +85,8 @@ export const TUNER_MODES = {
     viola: {
         title: "Afinador de viola",
 
+        diagram: "orchestral",
+
         strings: [
             { name: "A4", noteNumber: 69, thickness: 2, audioPath: null },
             { name: "D4", noteNumber: 62, thickness: 3, audioPath: null },
@@ -90,6 +97,8 @@ export const TUNER_MODES = {
 
     cello: {
         title: "Afinador de violoncelo",
+
+        diagram: "orchestral",
 
         strings: [
             { name: "A3", noteNumber: 57, thickness: 3, audioPath: null },
