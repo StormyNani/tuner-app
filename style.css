@@ -1804,7 +1804,7 @@ body.settings-open {
 }
 
 .guitarReferenceDiagram {
-    transform: scaleX(1.09);
+    transform: scaleX(1.20);
     transform-origin: center;
 }
 
@@ -2125,6 +2125,818 @@ body.settings-open {
     .diagramNoteButton .stringNote {
         font-size: 14px;
     }
+}
+
+
+
+/* Medidor adaptado à largura disponível */
+#tunerMeter {
+    width: min(380px, 100%);
+}
+
+#gaugeArc {
+    width: calc(var(--gauge-radius, 150px) * 2);
+    height: var(--gauge-radius, 150px);
+}
+
+#gaugeArc::before {
+    width: calc(var(--gauge-radius, 150px) * 2);
+    height: calc(var(--gauge-radius, 150px) * 2);
+}
+
+#gaugeArc::after {
+    left: 22px;
+    top: 22px;
+
+    width: calc(var(--gauge-radius, 150px) * 2 - 44px);
+    height: calc(var(--gauge-radius, 150px) * 2 - 44px);
+}
+
+#needle {
+    height: calc(var(--gauge-radius, 150px) - 35px);
+}
+
+.gaugeLabel {
+    font-size: 12px;
+}
+
+/* Controles rítmicos */
+.metronomeRhythmButton,
+.metronomeRhythmButtonText {
+    min-width: 0;
+}
+
+.metronomeRhythmButtonText {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 500px) {
+    #metronomeRhythmControls {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .metronomeRhythmButton {
+        grid-template-columns: 48px minmax(0, 1fr);
+        gap: 12px;
+        padding: 12px 14px;
+    }
+
+    .metronomeRhythmSymbol {
+        min-width: 0;
+        font-size: 26px;
+    }
+}
+
+
+
+
+
+/* UKULELE */
+
+.ukuleleDiagram {
+    display: grid;
+
+    grid-template-columns:
+        clamp(44px, 12vw, 58px)
+        minmax(0, 250px)
+        clamp(44px, 12vw, 58px);
+
+    justify-content: center;
+    align-items: stretch;
+
+    gap: 8px;
+
+    width: min(420px, 100%);
+    margin: 0 auto;
+}
+
+
+
+.ukuleleDiagramSvg {
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    overflow: visible;
+}
+
+/* Botões alinhados às duas alturas das tarraxas */
+
+.ukuleleDiagram .diagramNoteButton.instrumentString {
+    width: clamp(44px, 12vw, 58px);
+    height: clamp(44px, 12vw, 58px);
+}
+
+
+
+.ukuleleDiagram .diagramNoteButton:nth-child(1) {
+    top: 32.56%;
+}
+
+
+
+.ukuleleDiagram .diagramNoteButton:nth-child(2) {
+    top: 62.79%;
+}
+
+/* Madeira e braço */
+
+.ukuleleWood {
+    fill: #b9896d;
+    stroke: #755442;
+    stroke-width: 3.5;
+    stroke-linejoin: round;
+}
+
+
+
+.ukuleleNeck {
+    fill: #595959;
+    stroke: #424242;
+    stroke-width: 3.5;
+}
+
+/* Tarraxas */
+
+.ukuleleStem {
+    stroke: #555555;
+    stroke-width: 7;
+    stroke-linecap: round;
+
+    cursor: pointer;
+}
+
+
+
+.ukuleleKnob {
+    fill: #484848;
+    stroke: #363636;
+    stroke-width: 2;
+
+    cursor: pointer;
+}
+
+
+
+.ukulelePostBase {
+    fill: #777777;
+    stroke: #555555;
+    stroke-width: 2;
+
+    cursor: pointer;
+}
+
+
+
+.ukulelePost {
+    fill: #bdbdbd;
+    stroke: #e0e0e0;
+    stroke-width: 1.5;
+
+    cursor: pointer;
+}
+
+/* Peças da corda selecionada */
+
+.ukuleleStem.selected {
+    stroke: var(--sesi-red);
+}
+
+
+
+.ukuleleKnob.selected,
+.ukulelePostBase.selected {
+    fill: var(--sesi-red);
+    stroke: var(--sesi-dark-red);
+}
+
+
+
+.ukulelePost.selected {
+    fill: #ef777b;
+    stroke: var(--sesi-dark-red);
+}
+
+/* Pestana e cordas */
+
+.ukuleleNut {
+    stroke: #e2d9cc;
+    stroke-width: 7;
+    stroke-linecap: round;
+}
+
+
+
+.ukuleleDiagramSvg .diagramStringLine {
+    fill: none;
+    filter: none;
+    pointer-events: none;
+}
+
+
+
+.ukuleleStringHit {
+    fill: none;
+    stroke: transparent;
+    stroke-width: 12;
+
+    pointer-events: stroke;
+    cursor: pointer;
+}
+
+
+
+
+
+/* PROPORÇÕES DOS NOVOS DESENHOS */
+
+.guitarDiagram,
+.orchestralDiagram {
+    display: grid;
+
+    grid-template-columns:
+        clamp(44px, 12vw, 58px)
+        minmax(0, 250px)
+        clamp(44px, 12vw, 58px);
+
+    justify-content: center;
+    align-items: stretch;
+
+    gap: 8px;
+
+    width: min(420px, 100%);
+    margin: 0 auto;
+}
+
+
+
+.clearInstrumentSvg {
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    overflow: visible;
+    transform: none;
+}
+
+/* Mesmo tamanho dos botões do ukulele */
+
+.guitarDiagram .diagramNoteButton.instrumentString,
+.orchestralDiagram .diagramNoteButton.instrumentString {
+    width: clamp(44px, 12vw, 58px);
+    height: clamp(44px, 12vw, 58px);
+}
+
+/* Violão: três alturas */
+
+.guitarDiagram .diagramStringColumn
+.diagramNoteButton:nth-child(1) {
+    top: 29.07%;
+}
+
+
+
+.guitarDiagram .diagramStringColumn
+.diagramNoteButton:nth-child(2) {
+    top: 47.67%;
+}
+
+
+
+.guitarDiagram .diagramStringColumn
+.diagramNoteButton:nth-child(3) {
+    top: 66.28%;
+}
+
+
+
+
+/* Violino: esquerda */
+
+.orchestralDiagram .diagramStringColumn:first-child
+.diagramNoteButton:nth-child(1) {
+    top: 43.72%;
+}
+
+
+
+.orchestralDiagram .diagramStringColumn:first-child
+.diagramNoteButton:nth-child(2) {
+    top: 64.19%;
+}
+
+/* Violino: direita */
+
+.orchestralDiagram .diagramStringColumn:last-child
+.diagramNoteButton:nth-child(1) {
+    top: 33.49%;
+}
+
+
+
+.orchestralDiagram .diagramStringColumn:last-child
+.diagramNoteButton:nth-child(2) {
+    top: 53.95%;
+}
+
+
+
+/* Madeira e braço */
+
+.clearWood {
+    fill: #b9896d;
+    stroke: #755442;
+    stroke-width: 3.5;
+    stroke-linejoin: round;
+}
+
+
+
+.clearNeck {
+    fill: #595959;
+    stroke: #424242;
+    stroke-width: 3.5;
+}
+
+
+
+.clearCavity {
+    fill: #956d54;
+}
+
+
+
+.clearScrollLine {
+    fill: none;
+    stroke: #755442;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+/* Aberturas do violão */
+
+.clearSlotDepth {
+    fill: #755442;
+}
+
+
+
+.clearSlot {
+    fill: #ffffff;
+}
+
+/* Tarraxas e eixos */
+
+.clearStem {
+    stroke: #555555;
+    stroke-width: 7;
+    stroke-linecap: round;
+
+    cursor: pointer;
+}
+
+
+
+.clearKnob {
+    fill: #484848;
+    stroke: #363636;
+    stroke-width: 2;
+
+    cursor: pointer;
+}
+
+
+
+.clearRoller {
+    fill: #ded8cf;
+    stroke: #947b66;
+    stroke-width: 1.5;
+
+    cursor: pointer;
+}
+
+
+
+.clearStem.selected {
+    stroke: var(--sesi-red);
+}
+
+
+
+.clearKnob.selected,
+.clearRoller.selected {
+    fill: var(--sesi-red);
+    stroke: var(--sesi-dark-red);
+}
+
+/* Pestana e cordas */
+
+.clearNut {
+    stroke-width: 7;
+    stroke-linecap: round;
+}
+
+
+
+.clearInstrumentSvg .diagramStringLine {
+    fill: none;
+    filter: none;
+    pointer-events: none;
+}
+
+
+
+.clearStringHit {
+    fill: none;
+    stroke: transparent;
+    stroke-width: 10;
+
+    pointer-events: stroke;
+    cursor: pointer;
+}
+
+
+/* Hastes do violino: grossas e com extremidades retas */
+.clearViolinStem {
+    stroke-width: 13;
+    stroke-linecap: butt;
+}
+
+
+
+#meterPulseSummary svg {
+    width: 32px;
+    height: 38px;
+    flex-shrink: 0;
+}
+
+
+
+.customMeterControls {
+    margin-top: 16px;
+}
+
+.customMeterControls label {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+
+.customMeterControls input,
+.customMeterControls select {
+    width: 100%;
+    min-width: 0;
+
+    padding: 9px;
+
+    font: inherit;
+    font-size: 16px;
+
+    color: var(--text-primary);
+    background-color: white;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+}
+
+.customMeterControls button {
+    margin: 0;
+}
+
+
+
+/* BOTÃO DO COMPASSO PERSONALIZADO */
+
+.customMeterOpenButton {
+    width: 100%;
+    margin: 14px 0 0;
+    padding: 12px;
+}
+
+/* JANELA: reutiliza settingsDialog e settingsHeader */
+
+.customMeterDialog {
+    padding: 0;
+    border: none;
+
+    color: var(--text-primary);
+}
+
+.customMeterDialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.customMeterDialog .settingsHeader h2 {
+    min-width: 0;
+    font-size: 20px;
+}
+
+.customMeterDialog .closeSettingsButton {
+    flex-shrink: 0;
+}
+
+/* PRÉVIA À ESQUERDA, CAMPOS À DIREITA */
+
+.customMeterLayout {
+    display: grid;
+    grid-template-columns: 90px minmax(0, 1fr);
+
+    align-items: stretch;
+    gap: 18px;
+}
+
+.customMeterPreview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 14px;
+    padding: 14px 8px;
+
+    background-color: #f7f7f7;
+
+    border: 1px solid var(--border);
+    border-radius: 14px;
+}
+
+.customMeterPreviewLabel {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.customMeterFraction {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 3px;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 46px;
+    font-weight: bold;
+    line-height: 0.95;
+
+    color: var(--sesi-red);
+
+    font-variant-numeric: lining-nums tabular-nums;
+}
+
+.customMeterFields {
+    display: grid;
+    align-content: center;
+    gap: 16px;
+
+    min-width: 0;
+}
+
+.customMeterFields label {
+    display: grid;
+    gap: 7px;
+
+    min-width: 0;
+
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.customMeterFields input,
+.customMeterFields select {
+    width: 100%;
+    min-width: 0;
+
+    padding: 10px;
+
+    font: inherit;
+    font-size: 16px;
+    font-weight: normal;
+
+    color: var(--text-primary);
+    background-color: white;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+}
+
+/* AÇÕES */
+
+.customMeterActions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.customMeterActions button {
+    margin: 0;
+}
+
+.customMeterCancel {
+    color: var(--sesi-red);
+    background-color: transparent;
+
+    border: 1px solid var(--sesi-red);
+    box-shadow: none;
+}
+
+.customMeterCancel:hover:not(:disabled) {
+    color: white;
+}
+
+/* CELULAR: janela na parte inferior, como as configurações */
+
+@media (max-width: 500px) {
+    .customMeterDialog {
+        width: 100%;
+        max-width: 100%;
+        max-height: 90vh;
+
+        margin: auto 0 0;
+
+        border-radius: 22px 22px 0 0;
+    }
+
+    .customMeterLayout {
+        grid-template-columns: 76px minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .customMeterFraction {
+        font-size: 40px;
+    }
+}
+
+
+
+.customMeterFraction {
+    min-width: 1.2em;
+}
+
+.customMeterFraction [data-preview-top] {
+    display: block;
+    width: 100%;
+
+    padding-bottom: 5px;
+
+    text-align: center;
+    border-bottom: 2px solid currentColor;
+}
+
+.customMeterFraction [data-preview-bottom] {
+    padding-top: 3px;
+}
+
+
+
+.customMeterDenominators {
+    min-width: 0;
+
+    margin: 0;
+    padding: 0;
+
+    border: none;
+}
+
+.customMeterDenominators legend {
+    margin-bottom: 7px;
+    padding: 0;
+
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.customMeterNoteOptions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    gap: 7px;
+}
+
+.customMeterFields .customMeterNoteChoice {
+    position: relative;
+    display: block;
+
+    min-width: 0;
+
+    cursor: pointer;
+}
+
+/* Mantém o controle acessível pelo teclado. */
+.customMeterNoteChoice input {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    margin: 0;
+    padding: 0;
+
+    opacity: 0;
+}
+
+.customMeterNoteFace {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+
+    min-height: 48px;
+    padding: 5px;
+
+    color: var(--text-primary);
+    background-color: white;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+}
+
+.customMeterNoteFace svg {
+    width: 24px;
+    height: 36px;
+
+    margin: 0 !important;
+    flex-shrink: 0;
+}
+
+.customMeterNoteChoice:hover .customMeterNoteFace {
+    border-color: var(--sesi-red);
+}
+
+.customMeterNoteChoice input:checked + .customMeterNoteFace {
+    color: white;
+    background-color: var(--sesi-red);
+    border-color: var(--sesi-red);
+}
+
+.customMeterNoteChoice input:focus-visible + .customMeterNoteFace {
+    outline: 2px solid var(--sesi-dark-red);
+    outline-offset: 3px;
+}
+
+
+
+/* SUBDIVISÕES */
+
+#subdivisionOptions {
+    grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+}
+
+#subdivisionOptions .metronomeRhythmOption {
+    min-height: 82px;
+    padding: 8px;
+}
+
+#subdivisionOptions .rhythmOptionSymbol {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-width: 0;
+    height: 64px;
+}
+
+#subdivisionOptions .rhythmOptionSymbol svg {
+    display: block;
+    max-width: 100%;
+    height: 64px;
+}
+
+#subdivisionButtonSymbol {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#subdivisionButtonSymbol svg {
+    max-width: 100%;
+    height: 58px;
+}
+
+/* FIGURAS DO COMPASSO PERSONALIZADO */
+
+.customMeterNoteOptions {
+    grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+}
+
+.customMeterNoteFace {
+    min-height: 68px;
+    gap: 6px;
+    padding: 6px;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.customMeterNoteFace svg {
+    width: 36px;
+    height: 58px;
+
+    margin: 0 !important;
+    flex-shrink: 0;
 }
 
 /* 

@@ -164,406 +164,6 @@ function createStringColumn(
 
 
 
-function createGuitarSvg(
-    lowToHighStrings,
-    buttonByNoteNumber,
-    onSelect
-) {
-    const svg = createSvgElement("svg", {
-        viewBox: "0 29 300 471",
-        role: "img",
-        "aria-label": "Cabeça de violão com seis cordas"
-    });
-
-    svg.classList.add(
-        "guitarDiagramSvg",
-        "guitarReferenceDiagram"
-    );
-
-    // Cria um elemento e o adiciona à camada indicada.
-    function shape(
-        tag,
-        attributes,
-        className,
-        parent = svg
-    ) {
-        const element = createSvgElement(tag, attributes);
-
-        element.setAttribute("class", className);
-        parent.appendChild(element);
-
-        return element;
-    }
-
-    // Associa a peça à seleção de uma corda.
-    function selectable(element, stringData) {
-        element.dataset.noteNumber = String(
-            stringData.noteNumber
-        );
-
-        element.classList.add("diagramStringPart");
-
-        element.addEventListener("click", function () {
-            const button = buttonByNoteNumber.get(
-                stringData.noteNumber
-            );
-
-            onSelect(stringData, button);
-        });
-    }
-
-    // BRAÇO
-    shape(
-        "path",
-        {
-            d:
-                "M108 378 " +
-                "L192 378 " +
-                "L195 500 " +
-                "L105 500 Z"
-        },
-        "guitarNeck"
-    );
-
-    // Ferragens atrás da madeira.
-    const hardware = shape(
-        "g",
-        {},
-        "guitarHardwareLayer"
-    );
-
-    // CABEÇA
-    shape(
-        "path",
-        {
-            d:
-                "M78 62 " +
-                "Q99 58 120 46 " +
-                "Q137 39 150 39 " +
-                "Q163 39 180 46 " +
-                "Q201 58 222 62 " +
-
-                "L215 304 " +
-                "Q214 321 208 335 " +
-                "L192 376 " +
-                "L192 390 " +
-
-                "L108 390 " +
-                "L108 376 " +
-                "L92 335 " +
-                "Q86 321 85 304 Z"
-        },
-        "guitarHeadstockBody"
-    );
-
-    // PROFUNDIDADE DAS ABERTURAS
-    shape(
-        "path",
-        {
-            d:
-                "M94 130 " +
-                "Q92 112 109 110 " +
-                "Q126 109 129 128 " +
-                "L143 311 " +
-                "Q144 328 127 329 " +
-                "Q112 329 110 313 Z"
-        },
-        "guitarSlotDepth"
-    );
-
-    shape(
-        "path",
-        {
-            d:
-                "M206 130 " +
-                "Q208 112 191 110 " +
-                "Q174 109 171 128 " +
-                "L157 311 " +
-                "Q156 328 173 329 " +
-                "Q188 329 190 313 Z"
-        },
-        "guitarSlotDepth"
-    );
-
-    // PARTE ABERTA
-    shape(
-        "path",
-        {
-            d:
-                "M97 142 " +
-                "Q95 126 110 125 " +
-                "Q123 124 125 140 " +
-                "L139 311 " +
-                "Q140 322 127 323 " +
-                "Q116 323 114 310 Z"
-        },
-        "guitarSlotOpening"
-    );
-
-    shape(
-        "path",
-        {
-            d:
-                "M203 142 " +
-                "Q205 126 190 125 " +
-                "Q177 124 175 140 " +
-                "L161 311 " +
-                "Q160 322 173 323 " +
-                "Q184 323 186 310 Z"
-        },
-        "guitarSlotOpening"
-    );
-
-    const rollers = shape(
-        "g",
-        {},
-        "guitarRollerLayer"
-    );
-
-    // PESTANA: fica abaixo das cordas.
-    shape(
-        "line",
-        {
-            x1: 106,
-            y1: 390,
-            x2: 194,
-            y2: 390
-        },
-        "guitarNut"
-    );
-
-    const stringsLayer = shape(
-        "g",
-        {},
-        "guitarStringsLayer"
-    );
-
-    // POSIÇÕES DAS SEIS CORDAS
-    // x: posição na pestana e no braço.
-    // anchor: posição de fixação no rolete.
-    // y: altura do rolete.
-    const positions = [
-        {
-            data: lowToHighStrings[0],
-            x: 120,
-            anchor: 114,
-            y: 290,
-            left: true
-        },
-        {
-            data: lowToHighStrings[1],
-            x: 132,
-            anchor: 116,
-            y: 220,
-            left: true
-        },
-        {
-            data: lowToHighStrings[2],
-            x: 144,
-            anchor: 106,
-            y: 150,
-            left: true
-        },
-        {
-            data: lowToHighStrings[3],
-            x: 156,
-            anchor: 194,
-            y: 150,
-            left: false
-        },
-        {
-            data: lowToHighStrings[4],
-            x: 168,
-            anchor: 184,
-            y: 220,
-            left: false
-        },
-        {
-            data: lowToHighStrings[5],
-            x: 180,
-            anchor: 186,
-            y: 290,
-            left: false
-        }
-    ];
-
-    positions.forEach(function (position) {
-        if (!position.data) {
-            return;
-        }
-
-        // HASTE DA TARRAXA
-        const stem = shape(
-            "line",
-            {
-                x1: position.left ? 66 : 234,
-                y1: position.y,
-                x2: position.anchor,
-                y2: position.y
-            },
-            "diagramPegStem",
-            hardware
-        );
-
-        selectable(stem, position.data);
-
-        // PEQUENA PLACA LATERAL
-        const plate = shape(
-            "rect",
-            {
-                x: position.left ? 73 : 217,
-                y: position.y - 14,
-                width: 10,
-                height: 28,
-                rx: 4
-            },
-            "guitarMachinePlate",
-            hardware
-        );
-
-        selectable(plate, position.data);
-
-        // PEÇA EXTERNA DA TARRAXA
-        const knob = shape(
-            "rect",
-            {
-                x: position.left ? 48 : 234,
-                y: position.y - 13,
-                width: 18,
-                height: 26,
-                rx: 6
-            },
-            "diagramPegKnob",
-            hardware
-        );
-
-        selectable(knob, position.data);
-
-        // ROLETE: acompanha a inclinação da abertura.
-        const center = position.left
-            ? 112 + (position.y - 150) * 0.075
-            : 188 - (position.y - 150) * 0.075;
-
-        const roller = shape(
-            "rect",
-            {
-                x: center - 15,
-                y: position.y - 7,
-                width: 30,
-                height: 14,
-                rx: 4
-            },
-            "guitarRoller",
-            rollers
-        );
-
-        selectable(roller, position.data);
-
-        // CORDA CONTÍNUA
-        const string = shape(
-            "polyline",
-            {
-                points:
-                    `${position.anchor},${position.y} ` +
-                    `${position.x},390 ` +
-                    `${position.x},500`,
-
-                fill: "none",
-
-                "stroke-width": Math.max(
-                    1.5,
-                    position.data.thickness * 0.42
-                )
-            },
-            "diagramStringLine diagramStringPart",
-            stringsLayer
-        );
-
-        string.dataset.noteNumber = String(
-            position.data.noteNumber
-        );
-    });
-
-    // ÁREA ÚNICA DE CLIQUE
-    // Seleciona a corda mais próxima do ponto clicado.
-    const interaction = shape(
-        "rect",
-        {
-            x: 94,
-            y: 139,
-            width: 112,
-            height: 361,
-            fill: "transparent"
-        },
-        "guitarStringInteraction"
-    );
-
-    interaction.addEventListener("click", function (event) {
-        const matrix = svg.getScreenCTM();
-
-        if (!matrix) {
-            return;
-        }
-
-        // Converte a posição do clique para coordenadas do SVG.
-        const point = svg.createSVGPoint();
-
-        point.x = event.clientX;
-        point.y = event.clientY;
-
-        const local = point.matrixTransform(
-            matrix.inverse()
-        );
-
-        let nearest = null;
-        let distance = Infinity;
-
-        positions.forEach(function (position) {
-            if (
-                !position.data ||
-                local.y < position.y - 7
-            ) {
-                return;
-            }
-
-            const progress = Math.max(
-                0,
-                Math.min(
-                    1,
-                    (local.y - position.y) /
-                    (390 - position.y)
-                )
-            );
-
-            const stringX =
-                position.anchor +
-                (position.x - position.anchor) * progress;
-
-            const currentDistance = Math.abs(
-                local.x - stringX
-            );
-
-            if (currentDistance < distance) {
-                distance = currentDistance;
-                nearest = position;
-            }
-        });
-
-        if (nearest && distance <= 9) {
-            const button = buttonByNoteNumber.get(
-                nearest.data.noteNumber
-            );
-
-            onSelect(nearest.data, button);
-        }
-    });
-
-    return svg;
-}
-
-
-
-
 export function renderGuitarDiagram({container, strings, formatFullNoteName, onSelect, onRepeat}) {
 
     container.innerHTML = "";
@@ -813,385 +413,6 @@ export function renderGuitarDiagram({container, strings, formatFullNoteName, onS
 }
 
 
-
-
-
-
-
-
-
-
-
-function createOrchestralSvg(
-    lowToHighStrings,
-    buttonByNoteNumber,
-    onSelect
-) {
-
-    const svg =
-        createSvgElement(
-            "svg",
-            {
-                viewBox: "0 0 300 430",
-
-                role: "img",
-
-                "aria-label":
-                    "Cabeça de instrumento de quatro cordas"
-            }
-        );
-
-
-    svg.classList.add(
-        "orchestralDiagramSvg"
-    );
-
-
-
-    /*
-        BRAÇO DO INSTRUMENTO
-    */
-
-    const neck =
-        createSvgElement(
-            "path",
-            {
-                d:
-                    "M116 292 " +
-                    "L184 292 " +
-                    "L192 430 " +
-                    "L108 430 Z"
-            }
-        );
-
-
-    neck.classList.add(
-        "orchestralNeck"
-    );
-
-
-    svg.appendChild(
-        neck
-    );
-
-
-
-    /*
-        CABEÇA / CAIXA DAS CRAVELHAS
-
-        O formato agora é frontal,
-        curto e largo, inspirado
-        na referência.
-    */
-
-    const pegbox = createSvgElement("path", {
-        d:
-        "M136 22 " +
-        "L164 22 " +
-        "L164 39 " +
-        "Q164 45 171 48 " +
-        "L184 52 " +
-        "Q191 55 189 64 " +
-        "L186 77 " +
-        "Q184 87 174 92 " +
-        "L168 95 " +
-
-        // Laterais com abertura gradual.
-        "Q181 105 181 124 " +
-        "L185 295 " +
-        "L115 295 " +
-        "L119 124 " +
-        "Q119 105 132 95 " +
-
-        "L126 92 " +
-        "Q116 87 114 77 " +
-        "L111 64 " +
-        "Q109 55 116 52 " +
-        "L129 48 " +
-        "Q136 45 136 39 Z"
-    });
-
-    pegbox.classList.add(
-        "orchestralPegboxBody"
-    );
-
-
-    svg.appendChild(
-        pegbox
-    );
-
-
-
-
-    
-    const voluteCrown = createSvgElement("path", {
-        d:
-        // Topo.
-        "M138 10 " +
-        "Q132 10 132 16 " +
-        "L132 30 " +
-
-        // Degraus esquerdos.
-        "L119 30 " +
-        "Q113 30 113 36 " +
-        "L113 47 " +
-        "L103 47 " +
-        "Q98 47 97 53 " +
-        "L93 75 " +
-        "Q91 84 101 84 " +
-        "L114 84 " +
-
-        // Transição inferior arredondada.
-        "L114 94 " +
-        "Q114 101 122 104 " +
-        "L132 108 " +
-        "Q138 111 142 115 " +
-        "Q150 123 158 115 " +
-        "Q162 111 168 108 " +
-        "L178 104 " +
-        "Q186 101 186 94 " +
-        "L186 84 " +
-
-        // Degraus direitos.
-        "L199 84 " +
-        "Q209 84 207 75 " +
-        "L203 53 " +
-        "Q202 47 197 47 " +
-        "L187 47 " +
-        "L187 36 " +
-        "Q187 30 181 30 " +
-        "L168 30 " +
-
-        // Fechamento do topo.
-        "L168 16 " +
-        "Q168 10 162 10 Z"
-    });
-
-
-    voluteCrown.classList.add(
-        "orchestralVoluteCrown"
-    );
-
-
-    svg.appendChild(
-        voluteCrown
-    );   
-
-    // Divisórias verticais da voluta.
-    const voluteDetails = createSvgElement("path", {
-        d:
-            // Divisória central.
-            "M150 12 L150 118 " +
-
-            // Divisórias internas ligeiramente inclinadas.
-            "M134 30 Q133 68 130 106 " +
-            "M166 30 Q167 68 170 106 " +
-
-            // Divisórias externas.
-            "M115 48 Q116 70 117 99 " +
-            "M185 48 Q184 70 183 99 ",
-
-        fill: "none",
-        stroke: "#755442",
-        "stroke-width": 2,
-        "stroke-linecap": "round",
-        "stroke-linejoin": "round",
-        "pointer-events": "none"    
-    });
-
-    svg.appendChild(voluteDetails);
-
-
-
-
-
-
-    /*
-        DETALHE CENTRAL ESCURO
-
-        Ajuda a dar profundidade
-        e separa visualmente
-        as quatro cordas.
-    */
-
-    const pegboxInner = createSvgElement("path", {
-        d:
-        "M134 124 " +
-        "L166 124 " +
-        "Q170 124 170 128 " +
-        "L174 276 " +
-        "Q174 280 170 280 " +
-        "L130 280 " +
-        "Q126 280 126 276 " +
-        "L130 128 " +
-        "Q130 124 134 124 Z"
-    });
-
-    pegboxInner.classList.add("orchestralPegboxInner");
-
-    svg.appendChild(pegboxInner);
-
-    // Eixos ficam atrás das cordas.
-    const shaftLayer = createSvgElement("g");
-    svg.appendChild(shaftLayer);
-
-    const nut = createSvgElement("line", {
-        x1: 114,
-        y1: 326,
-        x2: 186,
-        y2: 326
-    });
-
-    nut.classList.add("orchestralNut");
-    svg.appendChild(nut);
-
-    // Cordas acima dos eixos e da pestana.
-    const stringLayer = createSvgElement("g");
-    svg.appendChild(stringLayer);
-
-    const positions = [
-        {
-            stringData: lowToHighStrings[0],
-            startX: 134,
-            pegY: 240,
-            isLeft: true
-        },
-        {
-            stringData: lowToHighStrings[1],
-            startX: 145,
-            pegY: 160,
-            isLeft: true
-        },
-        {
-            stringData: lowToHighStrings[2],
-            startX: 155,
-            pegY: 140,
-            isLeft: false
-        },
-        {
-            stringData: lowToHighStrings[3],
-            startX: 166,
-            pegY: 220,
-            isLeft: false
-        }
-    ];
-
-    positions.forEach(function (position) {
-        const stringData = position.stringData;
-
-        if (!stringData) {
-            return;
-        }
-
-        const noteNumber = String(stringData.noteNumber);
-        const pegY = position.pegY;
-        const knobX = position.isLeft ? 94 : 206;
-
-        function makeSelectable(element) {
-            element.dataset.noteNumber = noteNumber;
-
-            element.addEventListener("click", function () {
-                const button = buttonByNoteNumber.get(
-                    stringData.noteNumber
-                );
-
-                onSelect(stringData, button);
-            });
-        }
-
-        // Haste externa: entra por trás da madeira.
-        const outerShaft = createSvgElement("line", {
-            x1: knobX,
-            y1: pegY,
-            x2: 150,
-            y2: pegY
-        });
-
-        outerShaft.classList.add(
-            "diagramPegStem",
-            "orchestralPegShaft",
-            "diagramStringPart"
-        );
-
-        makeSelectable(outerShaft);
-
-        // A caixa cobre a passagem da haste pela madeira.
-        svg.insertBefore(outerShaft, pegbox);
-
-        // Limites internos da cavidade nesta altura.
-        const cavityProgress = (pegY - 128) / (276 - 128);
-        const cavityLeft = 130 - 4 * cavityProgress;
-        const cavityRight = 170 + 4 * cavityProgress;
-
-        // Trecho do eixo que reaparece dentro da cavidade.
-        const innerShaft = createSvgElement("line", {
-            x1: cavityLeft + 1,
-            y1: pegY,
-            x2: cavityRight - 1,
-            y2: pegY
-        });
-
-        innerShaft.classList.add(
-            "diagramPegStem",
-            "orchestralPegShaft",
-            "orchestralInnerShaft",
-            "diagramStringPart"
-        );
-
-        makeSelectable(innerShaft);
-        shaftLayer.appendChild(innerShaft);
-
-        // Peça oval mais próxima da caixa.
-        const pegKnob = createSvgElement("ellipse", {
-            cx: knobX,
-            cy: pegY,
-            rx: 15,
-            ry: 18
-        });
-
-        pegKnob.classList.add(
-            "diagramPegKnob",
-            "diagramStringPart"
-        );
-
-        makeSelectable(pegKnob);
-        svg.appendChild(pegKnob);
-
-        // Área de clique acompanha toda a corda reta.
-        const hitLine = createSvgElement("line", {
-            x1: position.startX,
-            y1: pegY,
-            x2: position.startX,
-            y2: 430
-        });
-
-        hitLine.classList.add("diagramStringHit");
-        makeSelectable(hitLine);
-        stringLayer.appendChild(hitLine);
-
-        // Corda contínua: do eixo até o fim do braço.
-        const stringLine = createSvgElement("line", {
-            x1: position.startX,
-            y1: pegY,
-            x2: position.startX,
-            y2: 430,
-            "stroke-width": Math.max(
-                1.4,
-                stringData.thickness * 0.5
-            )
-        });
-
-        stringLine.classList.add(
-            "diagramStringLine",
-            "diagramStringPart"
-        );
-
-        stringLine.dataset.noteNumber = noteNumber;
-        stringLayer.appendChild(stringLine);
-    });
-
-    return svg;
-}
 
 
 
@@ -1453,4 +674,534 @@ export function renderOrchestralDiagram(
         repeatButton:
             repeatButton
     };
+}
+
+
+
+
+export function renderUkuleleDiagram({
+    container,
+    strings,
+    formatFullNoteName,
+    onSelect,
+    onRepeat
+}) {
+    if (!Array.isArray(strings) || strings.length !== 4) {
+        return null;
+    }
+
+    container.replaceChildren();
+    container.classList.add("instrumentDiagramContainer");
+
+    // Ordem física das cordas, da esquerda para a direita.
+    // Não ordenar por frequência: o G4 é mais agudo que C4 e E4.
+    const [a, e, c, g] = strings;
+
+    const buttonByNoteNumber = new Map();
+
+    const diagram = document.createElement("div");
+    diagram.className = "ukuleleDiagram";
+
+    const leftColumn = createStringColumn(
+        [c, g],
+        formatFullNoteName,
+        onSelect,
+        buttonByNoteNumber
+    );
+
+    const rightColumn = createStringColumn(
+        [e, a],
+        formatFullNoteName,
+        onSelect,
+        buttonByNoteNumber
+    );
+
+    const svg = createSvgElement("svg", {
+        viewBox: "0 0 300 430",
+        class: "ukuleleDiagramSvg",
+        "aria-hidden": "true",
+        focusable: "false"
+    });
+
+    function shape(tag, attributes, className) {
+        const element = createSvgElement(tag, attributes);
+
+        if (className) {
+            element.setAttribute("class", className);
+        }
+
+        svg.appendChild(element);
+        return element;
+    }
+
+    function selectable(element, stringData) {
+        element.classList.add("diagramStringPart");
+        element.dataset.noteNumber = String(stringData.noteNumber);
+
+        element.addEventListener("click", function () {
+            onSelect(
+                stringData,
+                buttonByNoteNumber.get(stringData.noteNumber)
+            );
+        });
+
+        return element;
+    }
+
+    const positions = [
+        { string: g, x: 108, y: 270, endX: 123, side: -1 },
+        { string: c, x: 108, y: 140, endX: 141, side: -1 },
+        { string: e, x: 192, y: 140, endX: 159, side: 1 },
+        { string: a, x: 192, y: 270, endX: 177, side: 1 }
+    ];
+
+    // Hastes: desenhadas antes da madeira.
+    positions.forEach(function (position) {
+        const left = position.side === -1;
+
+        selectable(
+            shape("line", {
+                x1: left ? 51 : 249,
+                y1: position.y,
+                x2: position.x,
+                y2: position.y
+            }, "ukuleleStem"),
+            position.string
+        );
+
+        selectable(
+            shape("rect", {
+                x: left ? 27 : 243,
+                y: position.y - 17,
+                width: 30,
+                height: 34,
+                rx: 10
+            }, "ukuleleKnob"),
+            position.string
+        );
+    });
+
+    // Pequeno trecho do braço.
+    shape("path", {
+        d: "M 113 340 L 187 340 L 191 420 L 109 420 Z"
+    }, "ukuleleNeck");
+
+    // Cabeça: topo elevado no centro e ombros perto da pestana.
+    shape("path", {
+        d: `
+            M 68 35
+            Q 113 36 146 20
+            Q 150 18 154 20
+            Q 187 36 232 35
+            Q 236 35 235 42
+
+            L 230 276
+            Q 230 291 222 305
+            L 194 346
+            Q 188 355 188 367
+
+            L 112 367
+            Q 112 355 106 346
+            L 78 305
+            Q 70 291 70 276
+
+            L 65 42
+            Q 64 35 68 35
+            Z
+        `
+    }, "ukuleleWood");
+
+    // Eixos frontais em dois tons de cinza.
+    positions.forEach(function (position) {
+        selectable(
+            shape("circle", {
+                cx: position.x,
+                cy: position.y,
+                r: 14
+            }, "ukulelePostBase"),
+            position.string
+        );
+
+        selectable(
+            shape("circle", {
+                cx: position.x,
+                cy: position.y,
+                r: 8
+            }, "ukulelePost"),
+            position.string
+        );
+    });
+
+    // A pestana fica atrás das cordas.
+    shape("line", {
+        x1: 111,
+        y1: 368,
+        x2: 189,
+        y2: 368
+    }, "ukuleleNut");
+
+    positions.forEach(function (position) {
+        const path = `
+            M ${position.x} ${position.y + 5}
+            L ${position.endX} 368
+            L ${position.endX} 420
+        `;
+
+        // Área de toque mais larga que a corda visível.
+        const hit = shape("path", {
+            d: path
+        }, "ukuleleStringHit");
+
+        hit.addEventListener("click", function () {
+            onSelect(
+                position.string,
+                buttonByNoteNumber.get(position.string.noteNumber)
+            );
+        });
+
+        const line = shape("path", {
+            d: path,
+            "stroke-width": 1.5
+        }, "diagramStringLine diagramStringPart");
+
+        line.dataset.noteNumber = String(position.string.noteNumber);
+    });
+
+    diagram.append(leftColumn, svg, rightColumn);
+
+    const repeatArea = document.createElement("div");
+    repeatArea.className = "diagramRepeatArea";
+
+    const repeatButton = document.createElement("button");
+    repeatButton.type = "button";
+    repeatButton.className = "stringRepeatButton diagramRepeatButton";
+    repeatButton.textContent = "↻";
+    repeatButton.hidden = true;
+    repeatButton.title = "Repetir nota selecionada";
+
+    repeatButton.setAttribute(
+        "aria-label",
+        "Repetir nota selecionada"
+    );
+
+    repeatButton.setAttribute("aria-pressed", "false");
+
+    repeatButton.addEventListener("click", function () {
+        const selectedNote = Number(repeatButton.dataset.noteNumber);
+
+        const stringData = strings.find(function (item) {
+            return item.noteNumber === selectedNote;
+        });
+
+        if (stringData) {
+            onRepeat(stringData, repeatButton);
+        }
+    });
+
+    repeatArea.appendChild(repeatButton);
+    container.append(diagram, repeatArea);
+
+    return {
+        firstButton: buttonByNoteNumber.get(strings[0].noteNumber),
+        repeatButton
+    };
+}
+
+
+
+
+function createClearInstrumentSvg(
+    strings,
+    buttonByNoteNumber,
+    onSelect,
+    orchestral
+) {
+    const svg = createSvgElement("svg", {
+        viewBox: "0 0 300 430",
+        class: "clearInstrumentSvg",
+        "aria-hidden": "true",
+        focusable: "false"
+    });
+
+    function draw(tag, attributes, className) {
+        const element = createSvgElement(tag, attributes);
+
+        if (className) {
+            element.setAttribute("class", className);
+        }
+
+        svg.appendChild(element);
+        return element;
+    }
+
+    function select(element, stringData) {
+        element.classList.add("diagramStringPart");
+        element.dataset.noteNumber = String(stringData.noteNumber);
+
+        element.addEventListener("click", function () {
+            onSelect(
+                stringData,
+                buttonByNoteNumber.get(stringData.noteNumber)
+            );
+        });
+
+        return element;
+    }
+
+    function path(d, className) {
+        return draw("path", { d }, className);
+    }
+
+    // O braço ocupa apenas a parte inferior do desenho.
+    path(
+        "M104 350 H196 L200 420 H100 Z",
+        "clearNeck"
+    );
+
+    let positions;
+
+    if (orchestral) {
+        // Caixa das cravelhas: mais larga e com inclinação suave.
+        path(
+            "M116 98 Q150 88 184 98 L196 352 H104 Z",
+            "clearWood"
+        );
+
+        // Rebaixo central com madeira visível nas laterais.
+        path(
+            "M128 112 Q150 104 172 112 " +
+            "L180.7 320 " +
+            "Q181 327 174 327 " +
+            "H126 " +
+            "Q119 327 119.3 320 Z",
+            "clearCavity"
+        );
+
+        // Voluta em camadas, com divisões bem definidas.
+        path(
+            "M91 55 H209 L215 88 Q215 94 208 94 " +
+            "H92 Q85 94 85 88 Z",
+            "clearWood"
+        );
+
+        path(
+            "M108 37 H192 L196 102 " +
+            "Q174 111 150 124 Q126 111 104 102 Z",
+            "clearWood"
+        );
+
+        path(
+            "M131 22 Q131 18 136 18 H164 " +
+            "Q169 18 169 22 L174 108 " +
+            "Q164 117 150 124 Q136 117 126 108 Z",
+            "clearWood"
+        );
+
+        path(
+            "M150 20 V122",
+            "clearScrollLine"
+        );
+
+        positions = [
+            { data: strings[0], y: 276, x: 129, left: true },
+            { data: strings[1], y: 188, x: 143, left: true },
+            { data: strings[2], y: 144, x: 157, left: false },
+            { data: strings[3], y: 232, x: 171, left: false }
+        ];
+
+        positions.forEach(function (position) {
+            const { data, y, left } = position;
+
+            // Borda externa da madeira nesta altura.
+            const edge = 116 - (y - 98) * 12 / 254;
+
+            // Limites do rebaixo nesta altura.
+            const cavityLeft = 128 - (y - 112) * 9 / 215;
+            const cavityRight = 300 - cavityLeft;
+
+            // Haste externa curta.
+            select(
+                draw("line", {
+                    x1: left ? edge - 24 : 300 - edge,
+                    y1: y,
+                    x2: left ? edge : 300 - edge + 24,
+                    y2: y
+                }, "clearStem clearViolinStem"),
+                data
+            );
+
+            // Eixo visível dentro do rebaixo.
+            select(
+                draw("line", {
+                    x1: cavityLeft,
+                    y1: y,
+                    x2: cavityRight,
+                    y2: y
+                }, "clearStem clearViolinStem"),
+                data
+            );
+
+            // Cabeça da cravelha mais compacta e cheia.
+            select(
+                draw("ellipse", {
+                    cx: left ? edge - 35 : 300 - edge + 35,
+                    cy: y,
+                    rx: 20,
+                    ry: 21
+                }, "clearKnob"),
+                data
+            );
+        });
+    } else {
+        // Cabeça do violão mais ampla, com ombros definidos.
+        path(
+            "M67 42 " +
+            "Q104 38 125 27 " +
+            "Q150 12 175 27 " +
+            "Q196 38 233 42 " +
+            "L230 290 " +
+            "Q230 305 219 318 " +
+            "L198 342 " +
+            "Q193 348 193 361 " +
+            "H107 " +
+            "Q107 348 102 342 " +
+            "L81 318 " +
+            "Q70 305 70 290 Z",
+            "clearWood"
+        );
+
+        // Aberturas mais largas, com fundo superior sombreado.
+        [87, 177].forEach(function (x) {
+            draw("rect", {
+                x,
+                y: 86,
+                width: 36,
+                height: 219,
+                rx: 17
+            }, "clearSlotDepth");
+
+            draw("rect", {
+                x: x + 3,
+                y: 99,
+                width: 30,
+                height: 203,
+                rx: 13
+            }, "clearSlot");
+        });
+
+        positions = [
+            { data: strings[0], y: 285, anchor: 105, x: 115, left: true },
+            { data: strings[1], y: 205, anchor: 105, x: 129, left: true },
+            { data: strings[2], y: 125, anchor: 105, x: 143, left: true },
+            { data: strings[3], y: 125, anchor: 195, x: 157, left: false },
+            { data: strings[4], y: 205, anchor: 195, x: 171, left: false },
+            { data: strings[5], y: 285, anchor: 195, x: 185, left: false }
+        ];
+
+        positions.forEach(function (position) {
+            const { data, y, anchor, left } = position;
+
+            select(
+                draw("line", {
+                    x1: left ? 54 : 246,
+                    y1: y,
+                    x2: left ? 68 : 232,
+                    y2: y
+                }, "clearStem"),
+                data
+            );
+
+            select(
+                draw("rect", {
+                    x: left ? 28 : 242,
+                    y: y - 15,
+                    width: 30,
+                    height: 30,
+                    rx: 8
+                }, "clearKnob"),
+                data
+            );
+
+            select(
+                draw("rect", {
+                    x: anchor - 16,
+                    y: y - 6,
+                    width: 32,
+                    height: 12,
+                    rx: 4
+                }, "clearRoller"),
+                data
+            );
+        });
+    }
+
+    const nutY = 362;
+
+    draw("line", {
+        x1: 104,
+        y1: nutY,
+        x2: 196,
+        y2: nutY,
+        stroke: orchestral ? "#444444" : "#e2d9cc"
+    }, "clearNut");
+
+    positions.forEach(function (position) {
+        const startX = orchestral ? position.x : position.anchor;
+
+        const d =
+            `M${startX} ${position.y} ` +
+            `L${position.x} ${nutY} ` +
+            `L${position.x} 420`;
+
+        const hit = path(d, "clearStringHit");
+
+        hit.addEventListener("click", function () {
+            onSelect(
+                position.data,
+                buttonByNoteNumber.get(position.data.noteNumber)
+            );
+        });
+
+        const stringLine = draw("path", {
+            d,
+            "stroke-width": 1.6
+        }, "diagramStringLine diagramStringPart");
+
+        stringLine.dataset.noteNumber =
+            String(position.data.noteNumber);
+    });
+
+    return svg;
+}
+
+
+
+
+function createGuitarSvg(
+    lowToHighStrings,
+    buttonByNoteNumber,
+    onSelect
+) {
+    return createClearInstrumentSvg(
+        lowToHighStrings,
+        buttonByNoteNumber,
+        onSelect,
+        false
+    );
+}
+
+
+
+
+function createOrchestralSvg(
+    lowToHighStrings,
+    buttonByNoteNumber,
+    onSelect
+) {
+    return createClearInstrumentSvg(
+        lowToHighStrings,
+        buttonByNoteNumber,
+        onSelect,
+        true
+    );
 }

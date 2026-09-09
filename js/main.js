@@ -34,7 +34,8 @@ import {
 
 import {
     renderGuitarDiagram,
-    renderOrchestralDiagram
+    renderOrchestralDiagram,
+    renderUkuleleDiagram
 } from "./instrumentDiagram.js";
 
 
@@ -372,129 +373,62 @@ function returnToTunerModes() {
 
 
 //MODOS E CORDAS DOS INSTRUMENTOS
-
 function configureTunerMode() {
-
     const mode = TUNER_MODES[appState.currentTunerMode];
 
     tunerTitle.textContent = mode.title;
 
-    /* AFINADOR CROMÁTICO NÃO POSSUI CORDAS. */
-
+    // Afinador cromático não possui desenho de instrumento.
     if (appState.currentTunerMode === "chromatic") {
-
-        instrumentStrings.innerHTML = "";
-
+        instrumentStrings.replaceChildren();
         instrumentStrings.hidden = true;
 
         resetTunerDisplay();
-
         return;
     }
 
     instrumentStrings.hidden = false;
 
-    /*NOVO LAYOUT DO VIOLÃO*/
+    // Escolhe a função responsável pelo desenho.
+    const diagramRenderers = {
+        guitar: renderGuitarDiagram,
+        orchestral: renderOrchestralDiagram,
+        ukulele: renderUkuleleDiagram
+    };
 
-    if (mode.diagram === "guitar") {
+    const renderDiagram = diagramRenderers[mode.diagram];
 
-        const result = renderGuitarDiagram({
+    if (renderDiagram) {
+        const result = renderDiagram({
             container: instrumentStrings,
-
-            strings: mode.strings, 
-            
-            formatFullNoteName:
-            
+            strings: mode.strings,
             formatFullNoteName,
 
             onSelect: function (stringData, selectedButton) {
-
-                selectInstrumentString(stringData, selectedButton, true);
+                selectInstrumentString(
+                    stringData,
+                    selectedButton,
+                    true
+                );
             },
 
-
             onRepeat: function (stringData, repeatButton) {
-
                 toggleStringRepeat(stringData, repeatButton);
-            
             }
-            
         });
 
         if (result !== null) {
+            selectInstrumentString(
+                mode.strings[0],
+                result.firstButton,
+                false
+            );
 
-            selectInstrumentString(mode.strings[0], result.firstButton, false);
+            return;
         }
-
-        return;
     }
 
-    /*
-    LAYOUT DOS INSTRUMENTOS
-    DE ARCO
-    */
-
-    if (
-        mode.diagram ===
-        "orchestral"
-    ) {
-
-    const result =
-        renderOrchestralDiagram({
-
-            container:
-                instrumentStrings,
-
-            strings:
-                mode.strings,
-
-            formatFullNoteName:
-                formatFullNoteName,
-
-
-            onSelect:
-                function (
-                    stringData,
-                    selectedButton
-                ) {
-
-                    selectInstrumentString(
-                        stringData,
-                        selectedButton,
-                        true
-                    );
-                },
-
-
-            onRepeat:
-                function (
-                    stringData,
-                    repeatButton
-                ) {
-
-                    toggleStringRepeat(
-                        stringData,
-                        repeatButton
-                    );
-                }
-        });
-
-
-    if (
-        result !== null
-    ) {
-
-        selectInstrumentString(
-            mode.strings[0],
-            result.firstButton,
-            false
-        );
-    }
-
-
-        return;
-    }
-
+    // Instrumentos que ainda utilizam as barras.
     renderInstrumentStrings(mode.strings);
 }
 
@@ -1146,81 +1080,61 @@ function resetTunerDisplay() {
 }
 
 
-
 function createGaugeScale() {
 
     const meterWidth = tunerMeter.clientWidth;
 
-    const meterHeight = tunerMeter.clientHeight;
-
-    if (meterWidth <= 0 || meterHeight <= 0) {
-        
+    if (meterWidth <= 0) {
         return;
     }
 
-    gaugeTicks.innerHTML = "";
-    
-    /*Centro de rotação da agulha*/
+    const radius = Math.min(150, meterWidth / 2 - 36);
+
+    if (radius <= 35) {
+        return;
+    }
+
+    tunerMeter.style.setProperty("--gauge-radius", radius + "px");
+
+    tunerMeter.style.height = radius + 60 + "px";
 
     const centerX = meterWidth / 2;
+    const centerY = tunerMeter.clientHeight - 25;
 
-    const centerY = meterHeight - 25;
+    const tickRadius = radius - 12;
+    const labelRadius = radius + 18;
 
-
-    /*Distância das marcações em relação ao centro*/
-
-    const tickRadius = Math.min(138, meterWidth / 2 - 25);
-
-    const labelRadius = Math.min(168, meterWidth / 2 - 15);
-
-
-    /*RISQUINHOS: um a cada 5 cents*/
+    gaugeTicks.replaceChildren();
 
     for (let cents = -50; cents <= 50; cents += 5) {
-        
+
         const angleDegrees = (cents / 50) * 90;
-
         const angleRadians = angleDegrees * Math.PI / 180;
-
-        const x = centerX + Math.sin(angleRadians) * tickRadius;
-
-        const y = centerY - Math.cos(angleRadians) * tickRadius;
 
         const tick = document.createElement("span");
 
         tick.className = cents % 10 === 0 ? "gaugeTick gaugeTickMajor" : "gaugeTick";
 
-        tick.style.left = x + "px";
+        tick.style.left = centerX + Math.sin(angleRadians) * tickRadius + "px";
 
-        tick.style.top = y + "px";
+        tick.style.top = centerY - Math.cos(angleRadians) * tickRadius + "px";
 
-        tick.style.transform = "translate(-50%, -50%) " + "rotate(" + angleDegrees + "deg)";
+        tick.style.transform = `translate(-50%, -50%) rotate(${angleDegrees}deg)`;
 
         gaugeTicks.appendChild(tick);
-    }
 
-
-    /*NÚMEROS: um a cada 10 cents*/
-
-    for ( let cents = -50; cents <= 50; cents += 10) {
-        
-        const angleDegrees = (cents / 50) * 90;
-
-        const angleRadians = angleDegrees * Math.PI / 180;
-
-        const x = centerX + Math.sin(angleRadians) * labelRadius;
-
-        const y = centerY - Math.cos(angleRadians) * labelRadius;
+        if (cents % 10 !== 0) {
+            continue;
+        }
 
         const label = document.createElement("span");
 
         label.className = "gaugeLabel";
-
         label.textContent = cents > 0 ? "+" + cents : String(cents);
 
-        label.style.left = x + "px";
+        label.style.left = centerX + Math.sin(angleRadians) * labelRadius + "px";
 
-        label.style.top = y + "px";
+        label.style.top = centerY - Math.cos(angleRadians) * labelRadius + "px";
 
         gaugeTicks.appendChild(label);
     }

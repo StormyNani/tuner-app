@@ -1,3 +1,5 @@
+let updateMeterControls;
+
 import {
     metronomeState
 } from "./state.js";
@@ -5,7 +7,7 @@ import {
 
 
 
-// ELEMENTOS DO METRÔNOMO   
+// ELEMENTOS DO METRÃ”NOMO   
 
 const metronomeBpmInput = document.getElementById("metronomeBpm");
 
@@ -39,11 +41,9 @@ const subdivisionOptions = document.querySelectorAll("[data-subdivision]");
 
 const timeSignatureButton = document.getElementById("timeSignatureButton");
 
-const timeSignatureButtonValue = document.getElementById("timeSignatureButtonValue");
 
 const timeSignaturePanel = document.getElementById("timeSignaturePanel");
 
-const timeSignatureOptions = document.querySelectorAll("[data-time-signature]");
 
 const metronomeRhythmArea = document.getElementById("metronomeRhythmArea");
  
@@ -71,7 +71,7 @@ let beatIndicators = [];
 
 
 
-//CONFIGURAÇÕES INTERNAS
+//CONFIGURAÃ‡Ã•ES INTERNAS
 
 const LOOKAHEAD_MS = 25;
 
@@ -93,7 +93,7 @@ const BPM_MAX = Number(metronomeBpmInput.max);
 
 const BEATS_MIN = Number(metronomeBeatsInput.min);
 
-const BEATS_MAX = Number(metronomeBeatsInput.max)
+const BEATS_MAX = 16;
 
 const BEAT_STRENGTH_ORDER = [
     "strong",
@@ -129,199 +129,7 @@ const BEAT_STRENGTH_SETTINGS = {
 };
 
 
-const SUBDIVISION_SETTINGS = {
-    1: {
-        symbol: "♩",
-        name: "Semínima"
-    },
 
-    2: {
-        symbol: "♫",
-        name: "Colcheias"
-    },
-
-    3: {
-        symbol: "3",
-        name: "Tercinas"
-    },
-
-    4: {
-        symbol: "♬",
-        name: "Semicolcheias"
-    },
-
-    6: {
-        symbol: "6",
-        name: "Sextinas"
-    }
-};
-
-
-const TIME_SIGNATURE_SETTINGS = {
-
-    "1/4": {
-        beats: 1,
-
-        strengths: [
-            "strong"
-        ]
-    },
-
-
-    "2/4": {
-        beats: 2,
-
-        strengths: [
-            "strong",
-            "weak"
-        ]
-    },
-
-
-    "3/4": {
-        beats: 3,
-
-        strengths: [
-            "strong",
-            "weak",
-            "weak"
-        ]
-    },
-
-
-    "4/4": {
-        beats: 4,
-
-        strengths: [
-            "strong",
-            "weak",
-            "medium",
-            "weak"
-        ]
-    },
-
-
-    "5/4": {
-        beats: 5,
-
-        strengths: [
-            "strong",
-            "weak",
-            "weak",
-            "medium",
-            "weak"
-        ]
-    },
-
-
-    "6/4": {
-        beats: 6,
-
-        strengths: [
-            "strong",
-            "weak",
-            "weak",
-            "medium",
-            "weak",
-            "weak"
-        ]
-    },
-
-
-    "3/8": {
-        beats: 3,
-
-        strengths: [
-            "strong",
-            "weak",
-            "weak"
-        ]
-    },
-
-
-    "5/8": {
-        beats: 5,
-
-        strengths: [
-            "strong",
-            "weak",
-            "weak",
-            "medium",
-            "weak"
-        ]
-    },
-
-
-    "6/8": {
-        beats: 6,
-
-        strengths: [
-            "strong",
-            "weak",
-            "weak",
-            "medium",
-            "weak",
-            "weak"
-        ]
-    },
-
-
-    "7/8": {
-        beats: 7,
-
-        strengths: [
-            "strong",
-            "weak",
-            "medium",
-            "weak",
-            "medium",
-            "weak",
-            "weak"
-        ]
-    },
-
-
-    "9/8": {
-        beats: 9,
-
-        strengths: [
-            "strong",
-            "weak",
-            "weak",
-
-            "medium",
-            "weak",
-            "weak",
-
-            "medium",
-            "weak",
-            "weak"
-        ]
-    },
-
-
-    "12/8": {
-        beats: 12,
-
-        strengths: [
-            "strong",
-            "weak",
-            "weak",
-
-            "medium",
-            "weak",
-            "weak",
-
-            "medium",
-            "weak",
-            "weak",
-
-            "medium",
-            "weak",
-            "weak"
-        ]
-    }
-};
 
 
 let initialized = false;
@@ -348,7 +156,7 @@ const TAP_MAX_SAMPLES = 8;
 
 
 
-// CLASSIFICAÇÃO DO ANDAMENTO
+// CLASSIFICAÃ‡ÃƒO DO ANDAMENTO
 
 function getTempoName(bpm) {
 
@@ -390,7 +198,7 @@ function getTempoName(bpm) {
 
 
 
-// ATUALIZAÇÃO VISUAL DO BPM
+// ATUALIZAÃ‡ÃƒO VISUAL DO BPM
 
 function updateMetronomeBpmInterface() {
 
@@ -415,7 +223,7 @@ function updateMetronomeBpmInterface() {
 
 
 
-// ALTERAÇÃO DO BPM
+// ALTERAÃ‡ÃƒO DO BPM
 
 function setMetronomeBpm(newBpm, respectSliderLimits = true) {
     
@@ -447,7 +255,7 @@ function setMetronomeBpm(newBpm, respectSliderLimits = true) {
 
 
 
-// PREPARAÇÃO DAS INTENSIDADES
+// PREPARAÃ‡ÃƒO DAS INTENSIDADES
 
 function ensureBeatStrengths(beatCount) {
 
@@ -496,7 +304,7 @@ function applyBeatStrengthToElement(beatIndicator, beatIndex) {
 
 
 
-// ALTERAÇÃO DA INTENSIDADE
+// ALTERAÃ‡ÃƒO DA INTENSIDADE
 
 function cycleBeatStrength(beatIndex) {
     const currentStrength = metronomeState.beatStrengths[beatIndex];
@@ -520,7 +328,7 @@ function cycleBeatStrength(beatIndex) {
 
 
 
-// CRIAÇÃO DAS BARRAS DOS TEMPOS
+// CRIAÃ‡ÃƒO DAS BARRAS DOS TEMPOS
 
 function renderBeatIndicators() {
 
@@ -614,7 +422,7 @@ function restartMetronomeCycle() {
 
 
 
-// ALTERAÇÃO DA QUANTIDADE DE TEMPOS
+// ALTERAÃ‡ÃƒO DA QUANTIDADE DE TEMPOS
 
 function setBeatsPerMeasure(newBeatCount, newStrengths = null) {
     const numericBeatCount = Number(newBeatCount);
@@ -643,7 +451,7 @@ function setBeatsPerMeasure(newBeatCount, newStrengths = null) {
     renderBeatIndicators();
 
     if (metronomeState.running) {
-        metronomeStatus.textContent = "Tocando em " + metronomeState.bpm + " BPM — " + limitedBeatCount + 
+        metronomeStatus.textContent = "Tocando em " + metronomeState.bpm + " BPM â€” " + limitedBeatCount + 
             (limitedBeatCount === 1 ? " tempo" : " tempos");
 
         restartMetronomeCycle();
@@ -657,7 +465,7 @@ function setBeatsPerMeasure(newBeatCount, newStrengths = null) {
 
 
 
-// PAINÉIS RÍTMICOS
+// PAINÃ‰IS RÃTMICOS
 
 function closeRhythmPanels() {
 
@@ -707,35 +515,60 @@ function toggleTimeSignaturePanel() {
 
 
 function setSubdivision(newSubdivision) {
-
     const subdivision = Number(newSubdivision);
 
-    const settings = SUBDIVISION_SETTINGS[subdivision];
-
-    if (!settings) {
-        return;
-    }
+    if (![1, 2, 3, 4, 6].includes(subdivision)) return;
 
     metronomeState.subdivision = subdivision;
 
-    subdivisionButtonSymbol.textContent = settings.symbol;
+    const denominator = Number(
+        metronomeState.timeSignature.split("/")[1]
+    ) || 4;
 
-    subdivisionButtonName.textContent = settings.name;
-
-
-    subdivisionOptions.forEach(function (option) {
-
-            const isSelected = Number(option.dataset.subdivision) === subdivision;
-
-            option.classList.toggle("selected", isSelected);
-
-
-            option.setAttribute("aria-pressed", String(isSelected));
-        }
+    subdivisionButtonSymbol.innerHTML = createSubdivisionSymbol(
+        subdivision,
+        denominator
     );
 
-    if (metronomeState.running) {
+    subdivisionButtonName.textContent = "";
+    subdivisionButtonName.hidden = true;
 
+    subdivisionButton.setAttribute(
+        "aria-label",
+        `Subdivisão: ${subdivision} ${
+            subdivision === 1 ? "marcação" : "marcações"
+        } por pulsação. Alterar subdivisão.`
+    );
+
+    subdivisionOptions.forEach(function (option) {
+        const count = Number(option.dataset.subdivision);
+        const selected = count === subdivision;
+        const spans = option.querySelectorAll("span");
+
+        if (spans[0]) {
+            spans[0].innerHTML = createSubdivisionSymbol(
+                count,
+                denominator
+            );
+        }
+
+        if (spans[1]) {
+            spans[1].textContent = "";
+            spans[1].hidden = true;
+        }
+
+        option.setAttribute(
+            "aria-label",
+            count === 1
+                ? "Pulsação sem divisão"
+                : `Dividir a pulsação em ${count} partes iguais`
+        );
+
+        option.classList.toggle("selected", selected);
+        option.setAttribute("aria-pressed", String(selected));
+    });
+
+    if (metronomeState.running) {
         restartMetronomeCycle();
     }
 
@@ -745,52 +578,43 @@ function setSubdivision(newSubdivision) {
 
 
 function setTimeSignature(newTimeSignature) {
+    const plan = getMeterPlan(newTimeSignature);
 
-    const settings = TIME_SIGNATURE_SETTINGS[newTimeSignature];
+    if (!plan) return;
 
-    if (!settings) {
-        return;
-    }
+    metronomeState.timeSignature = plan.signature;
 
-    metronomeState.timeSignature = newTimeSignature;
+    const strengths = Array.from(
+        { length: plan.beats },
+        function (_, index) {
+            if (index === 0) return "strong";
 
-    timeSignatureButtonValue.textContent = newTimeSignature;
+            if (
+                plan.denominator === 8 &&
+                plan.numerator >= 6 &&
+                plan.numerator % 3 === 0 &&
+                index % 3 === 0
+            ) {
+                return "medium";
+            }
 
-    timeSignatureOptions.forEach(function (option) {
+            if (plan.numerator === 4 && index === 2) {
+                return "medium";
+            }
 
-        const isSelected = option.dataset.timeSignature === newTimeSignature;
+            return "weak";
+        }
+    );
 
-        option.classList.toggle("selected", isSelected);
+    // Atualiza também as figuras ao trocar o denominador.
+    setSubdivision(metronomeState.subdivision);
 
-        option.setAttribute("aria-pressed", String(isSelected));
-        
-    });
+    setBeatsPerMeasure(plan.beats, strengths);
 
-    setBeatsPerMeasure(settings.beats, settings.strengths);
-
+    updateMeterControls(plan);
 
     closeRhythmPanels();
 }
-
-
-
-function setCustomTimeSignature() {
-
-    metronomeState.timeSignature = "custom";
-
-
-    timeSignatureButtonValue.textContent = "Livre";
-
-
-    timeSignatureOptions.forEach(function (option) {
-
-        option.classList.remove("selected");
-
-        option.setAttribute("aria-pressed", "false");
-
-    });
-}
-
 
 
 // TAP TEMPO
@@ -858,7 +682,7 @@ function registerTap() {
 
 
 
-// CONFIGURAÇÕES DO METRÔNOMO
+// CONFIGURAÃ‡Ã•ES DO METRÃ”NOMO
 
 function openMetronomeSettings() {
 
@@ -914,7 +738,7 @@ function closeMetronomeSettings() {
 
 
 
-// INICIALIZAÇÃO
+// INICIALIZAÃ‡ÃƒO
 
 export function initializeMetronome() {
 
@@ -923,6 +747,8 @@ export function initializeMetronome() {
     }
 
     initialized = true;
+
+    updateMeterControls = installMeterControls(setTimeSignature);
 
     setMetronomeBpm(metronomeState.bpm);
 
@@ -936,13 +762,7 @@ export function initializeMetronome() {
 
     toggleMetronomeButton.disabled = false;
 
-    metronomeBeatsInput.addEventListener("input", function () {
 
-        setCustomTimeSignature();
-
-        setBeatsPerMeasure(metronomeBeatsInput.value);
-        
-    });
 
     toggleMetronomeButton.addEventListener("click", function () {
 
@@ -989,13 +809,7 @@ export function initializeMetronome() {
         });
     });
 
-    timeSignatureOptions.forEach(function (option) {
 
-        option.addEventListener("click", function () {
-
-            setTimeSignature(option.dataset.timeSignature);
-        });
-    });
 
     document.addEventListener("click", function (event) {
 
@@ -1048,7 +862,7 @@ export function initializeMetronome() {
 
 
 
-// VOLUME DO METRÔNOMO
+// VOLUME DO METRÃ”NOMO
 
 function setMetronomeVolume(newVolume) {
 
@@ -1107,7 +921,7 @@ async function getMetronomeAudioContext() {
 
     if (!AudioContextClass) {
 
-        throw new Error("A Web Audio API não é suportada neste navegador");
+        throw new Error("A Web Audio API nÃ£o Ã© suportada neste navegador");
     }
 
     if (metronomeState.audioContext === null || metronomeState.audioContext.state === "closed") {
@@ -1352,7 +1166,7 @@ function resetBeatIndicators() {
 
 
 
-// INICIAR O METRÔNONO
+// INICIAR O METRÃ”NONO
 
 async function startMetronome() {
 
@@ -1381,7 +1195,7 @@ async function startMetronome() {
 
         toggleMetronomeButton.classList.add("active");
 
-        metronomeStatus.textContent = "Tocando em " + metronomeState.bpm + " BPM — " + metronomeState.beatsPerMeasure + 
+        metronomeStatus.textContent = "Tocando em " + metronomeState.bpm + " BPM â€” " + metronomeState.beatsPerMeasure + 
             (metronomeState.beatsPerMeasure === 1 ? " tempo" : " tempos"
         );
     
@@ -1390,9 +1204,9 @@ async function startMetronome() {
         updateBeatAnimation();
     } catch (error) {
 
-        console.error("Erro ao iniciar o metrônomo:", error);
+        console.error("Erro ao iniciar o metrÃ´nomo:", error);
 
-        metronomeStatus.textContent = "Não foi possível iniciar o áudio";
+        metronomeStatus.textContent = "NÃ£o foi possÃ­vel iniciar o Ã¡udio";
 
         stopMetronome();
     } finally {
@@ -1404,7 +1218,7 @@ async function startMetronome() {
 
 
 
-// PARAR O METRÔNOMO
+// PARAR O METRÃ”NOMO
 
 export function stopMetronome() {
 
@@ -1451,4 +1265,413 @@ export function stopMetronome() {
     metronomeStatus.textContent = "Tempos: " + metronomeState.beatsPerMeasure;
 
     resetBeatIndicators();
+}
+
+
+
+function getMeterPlan(signature) {
+    if (!/^\d+\/\d+$/.test(signature)) return null;
+
+    const [numerator, denominator] = signature.split("/").map(Number);
+
+    if (
+        numerator < 1 ||
+        numerator > 16 ||
+        ![1, 2, 4, 8, 16, 32, 64].includes(denominator)
+    ) {
+        return null;
+    }
+
+    return {
+        signature: `${numerator}/${denominator}`,
+        numerator,
+        denominator,
+        beats: numerator,
+        note: denominator
+    };
+}
+
+
+
+function installMeterControls(onApply) {
+    const options = document.getElementById("timeSignatureOptions");
+
+    const buttonValue = document.getElementById(
+        "timeSignatureButtonValue"
+    );
+
+    const buttons = options.querySelectorAll("[data-time-signature]");
+
+    const subtitle = document.querySelector(
+        "#timeSignatureButton small"
+    );
+
+    const slider = document.getElementById("metronomeBeats");
+
+    const names = {
+        1: "Semibreve",
+        2: "Mínima",
+        4: "Semínima",
+        8: "Colcheia",
+        16: "Semicolcheia",
+        32: "Fusa",
+        64: "Semifusa"
+    };
+
+    // Botão dentro do painel que já existe.
+    const openButton = document.createElement("button");
+
+    openButton.type = "button";
+    openButton.className =
+        "metronomeRhythmOption customMeterOpenButton";
+
+    openButton.textContent = "Personalizado";
+    openButton.setAttribute("aria-haspopup", "dialog");
+    openButton.setAttribute("aria-controls", "customMeterDialog");
+
+    options.after(openButton);
+
+    // Janela com o acabamento das configurações.
+    const dialog = document.createElement("dialog");
+
+    dialog.id = "customMeterDialog";
+    dialog.className = "settingsDialog customMeterDialog";
+
+    dialog.setAttribute(
+        "aria-labelledby",
+        "customMeterTitle"
+    );
+
+    dialog.innerHTML = `
+        <div class="settingsHeader">
+            <h2 id="customMeterTitle">Compasso personalizado</h2>
+
+            <button
+                type="button"
+                class="closeSettingsButton"
+                aria-label="Fechar compasso personalizado"
+            >×</button>
+        </div>
+
+        <form class="settingsContent">
+            <div class="customMeterLayout">
+
+                <div class="customMeterPreview">
+                    <span class="customMeterPreviewLabel">
+                        Prévia
+                    </span>
+
+                    <div
+                        class="customMeterFraction"
+                        aria-hidden="true"
+                    >
+                        <span data-preview-top>4</span>
+                        <span data-preview-bottom>4</span>
+                    </div>
+                </div>
+
+                <div class="customMeterFields">
+                    <label>
+                        Número superior
+
+                        <input
+                            name="numerator"
+                            type="number"
+                            min="1"
+                            max="16"
+                            step="1"
+                            value="4"
+                            required
+                            inputmode="numeric"
+                        >
+                    </label>
+
+                    <fieldset class="customMeterDenominators">
+                        <legend>Número inferior</legend>
+
+                        <div class="customMeterNoteOptions">
+                            ${[1, 2, 4, 8, 16, 32, 64].map(n => `
+                                <label class="customMeterNoteChoice">
+                                    <input
+                                        type="radio"
+                                        name="denominator"
+                                        value="${n}"
+                                        ${n === 4 ? "checked" : ""}
+                                        aria-label="${n} — ${names[n]}"
+                                        required
+                                    >
+
+                                    <span class="customMeterNoteFace" aria-hidden="true">
+                                        <span>${n}</span>
+                                        ${createSubdivisionSymbol(1, n)}
+                                    </span>
+                                </label>
+                            `).join("")}
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <p
+                class="metronomeSettingHelp"
+                data-preview-description
+                aria-live="polite"
+            ></p>
+
+            <div class="customMeterActions">
+                <button
+                    type="button"
+                    class="customMeterCancel"
+                >Cancelar</button>
+
+                <button type="submit">Aplicar</button>
+            </div>
+        </form>
+    `;
+
+    document.body.appendChild(dialog);
+
+    const form = dialog.querySelector("form");
+
+    const top = form.elements.namedItem("numerator");
+    const bottom = form.elements.namedItem("denominator");
+
+    const previewTop = dialog.querySelector("[data-preview-top]");
+    const previewBottom = dialog.querySelector("[data-preview-bottom]");
+    const help = dialog.querySelector("[data-preview-description]");
+
+    const closeButton = dialog.querySelector(".closeSettingsButton");
+    const cancelButton = dialog.querySelector(".customMeterCancel");
+
+    function preview() {
+        const plan = getMeterPlan(`${top.value}/${bottom.value}`);
+
+        previewTop.textContent = plan ? plan.numerator : "–";
+        previewBottom.textContent = bottom.value;
+
+        // Só aparece uma mensagem quando o valor é inválido.
+        help.hidden = Boolean(plan);
+
+        help.textContent = plan
+            ? ""
+            : "Informe um número inteiro de 1 a 16.";
+    }
+
+    function closeDialog() {
+        if (dialog.open) {
+            dialog.close();
+        }
+    }
+
+    openButton.addEventListener("click", function () {
+        // Sempre abre com o compasso aplicado atualmente.
+        const plan = getMeterPlan(metronomeState.timeSignature);
+
+        top.value = plan ? plan.numerator : 4;
+        bottom.value = plan ? plan.denominator : 4;
+
+        preview();
+
+        dialog.showModal();
+        closeButton.focus();
+    });
+
+    closeButton.addEventListener("click", closeDialog);
+    cancelButton.addEventListener("click", closeDialog);
+
+    form.addEventListener("input", preview);
+    form.addEventListener("change", preview);
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (!form.reportValidity()) return;
+
+        const plan = getMeterPlan(`${top.value}/${bottom.value}`);
+
+        if (!plan) return;
+
+        // Fecha primeiro para devolver o foco ao botão visível.
+        closeDialog();
+
+        onApply(plan.signature);
+
+        // A aplicação fecha o painel de opções.
+        document.getElementById("timeSignatureButton").focus();
+    });
+
+    // Os botões prontos continuam funcionando como antes.
+    buttons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            onApply(button.dataset.timeSignature);
+        });
+    });
+
+    slider.max = "16";
+
+    document.querySelector(
+        'label[for="metronomeBeats"]'
+    ).textContent = "Número superior";
+
+    document.querySelector(
+        "#metronomeBeatsLimits span:last-child"
+    ).textContent = "16";
+
+    slider.addEventListener("input", function () {
+        const denominator =
+            metronomeState.timeSignature.split("/")[1];
+
+        onApply(`${slider.value}/${denominator}`);
+    });
+
+    return function (plan) {
+        slider.value = plan.numerator;
+
+        document.getElementById(
+            "metronomeBeatsValue"
+        ).textContent = plan.numerator;
+
+        buttonValue.textContent = plan.signature;
+        subtitle.textContent = names[plan.note] + " = BPM";
+
+        buttons.forEach(function (button) {
+            const selected =
+                button.dataset.timeSignature === plan.signature;
+
+            button.classList.toggle("selected", selected);
+            button.setAttribute("aria-pressed", String(selected));
+        });
+    };
+}
+
+
+
+function createSubdivisionSymbol(count, denominator) {
+    const factor = count === 3 ? 2 : count === 6 ? 4 : count;
+    const noteValue = denominator * factor;
+
+    const beams = Math.max(0, Math.log2(noteValue) - 2);
+    const hollow = noteValue <= 2;
+    const whole = noteValue === 1;
+    const tuplet = count === 3 || count === 6;
+
+    const spacing = 20;
+    const width = count === 1
+        ? 44
+        : (count - 1) * spacing + 32;
+
+    const firstX = count === 1 ? 17 : 12;
+    const headY = 60;
+    const stemTop = 10;
+
+    let drawing = "";
+
+    for (let index = 0; index < count; index++) {
+        const x = firstX + index * spacing;
+
+        // Traço horizontal da semibreve.
+        if (whole) {
+            drawing += `
+                <path
+                    d="M${x - 12} ${headY} H${x + 12}"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                />
+            `;
+        }
+
+        drawing += `
+            <ellipse
+                cx="${x}"
+                cy="${headY}"
+                rx="${whole ? 8 : 6}"
+                ry="${whole ? 4.5 : 4}"
+                transform="rotate(${whole ? 0 : -18} ${x} ${headY})"
+                fill="${hollow ? "none" : "currentColor"}"
+                stroke="currentColor"
+                stroke-width="${hollow ? 2 : 1.5}"
+            />
+        `;
+
+        if (!whole) {
+            drawing += `
+                <path
+                    d="M${x + 5} ${headY - 1} V${stemTop}"
+                    stroke="currentColor"
+                    stroke-width="2"
+                />
+            `;
+        }
+    }
+
+    // Mais espaço entre as barras e as bandeirolas.
+    for (let beam = 0; beam < beams; beam++) {
+        const y = stemTop + beam * 7;
+        const stemX = firstX + 5;
+
+        if (count > 1) {
+            drawing += `
+                <path
+                    d="M${stemX} ${y}
+                       H${stemX + (count - 1) * spacing}"
+                    stroke="currentColor"
+                    stroke-width="3"
+                />
+            `;
+        } else {
+            drawing += `
+                <path
+                    d="M${stemX} ${y}
+                       C${stemX + 4} ${y + 3},
+                        ${stemX + 14} ${y + 4},
+                        ${stemX + 12} ${y + 12}
+                       C${stemX + 10} ${y + 7},
+                        ${stemX + 4} ${y + 7},
+                        ${stemX} ${y + 5} Z"
+                    fill="currentColor"
+                />
+            `;
+        }
+    }
+
+    if (tuplet) {
+        drawing += `
+            <path
+                d="M5 3 V-1 H${width - 5} V3"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.2"
+            />
+
+            <text
+                x="${width / 2}"
+                y="-4"
+                text-anchor="middle"
+                font-family="Arial, sans-serif"
+                font-size="11"
+                font-weight="bold"
+                fill="currentColor"
+            >${count}</text>
+        `;
+    }
+
+    // Centraliza a área realmente desenhada.
+    // A semibreve não tem haste; as quiálteras têm número acima.
+    const offsetY = whole ? -22 : tuplet ? 13 : 0;
+
+    return `
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 -4 ${width} 84"
+            width="${width}"
+            height="64"
+            style="display:block;max-width:100%;margin:auto"
+            aria-hidden="true"
+            focusable="false"
+        >
+            <g transform="translate(0 ${offsetY})">
+                ${drawing}
+            </g>
+        </svg>
+    `;
 }

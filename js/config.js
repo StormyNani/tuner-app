@@ -61,6 +61,8 @@ export const TUNER_MODES = {
     ukulele: {
         title: "Afinador de ukulele",
 
+        diagram: "ukulele",
+
         strings: [
             { name: "A4", noteNumber: 69, thickness: 2, audioPath: null },
             { name: "E4", noteNumber: 64, thickness: 3, audioPath: null },
@@ -110,6 +112,8 @@ export const TUNER_MODES = {
 
     doubleBass: {
         title: "Afinador de contrabaixo",
+
+        diagram: "orchestral",
 
         strings: [
             { name: "G2", noteNumber: 43, thickness: 4, audioPath: null },
