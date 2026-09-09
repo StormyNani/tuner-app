@@ -99,7 +99,7 @@ export const metronomeState = {
 
     beatsPerMeasure: 4,
 
-    beatStrenghts: [],
+    beatStrengths: [],
 
     subdivision: 1,
 

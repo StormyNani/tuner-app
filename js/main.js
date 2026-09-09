@@ -669,8 +669,6 @@ async function startTuner() {
 
         microphoneState.audioSource.connect(microphoneState.analyser);
 
-        console.log("Analisador de áudio ativo");
-
         appState.animationFrameId = requestAnimationFrame(update);
 
     } catch (error) {
@@ -771,8 +769,6 @@ function update(timestamp) {
 
         let frequency = autoCorrelate(microphoneState.dataArray, microphoneState.analyser.context.sampleRate);
 
-        const rawFrequency = frequency;
-
         if (frequency !== -1) {
             appState.lastValidFrequencyTime = timestamp;
 
@@ -802,14 +798,6 @@ function update(timestamp) {
             } else {
                 smoothedFrequency = sortedHistory[middleIndex];
             }
-
-            console.log({
-                raw: rawFrequency.toFixed(2),
-
-                stabilized: frequency.toFixed(2),
-
-                smoothed: smoothedFrequency.toFixed(2)
-            });
 
             const detectedNote = frequencyToNote(smoothedFrequency);
 

@@ -187,22 +187,6 @@ button:disabled {
 
 
 
-#tuningSettings {
-    margin: 20px 0;
-}
-
-
-
-#tuningReference {
-    width: 70px;
-    padding: 6px;
-    margin-left: 5px;
-
-    text-align: center;
-}
-
-
-
 #tuningStatus {
 
     min-height: 24px;
@@ -1795,19 +1779,6 @@ body.settings-open {
     width: min(440px, 100%);
 }
 
-.guitarDiagramSvg,
-.orchestralDiagramSvg {
-    display: block;
-    width: 100%;
-    height: auto;
-    overflow: visible;
-}
-
-.guitarReferenceDiagram {
-    transform: scaleX(1.20);
-    transform-origin: center;
-}
-
 
 /* COLUNAS E BOTÕES DAS NOTAS */
 
@@ -1992,15 +1963,7 @@ body.settings-open {
     cursor: pointer;
 }
 
-
 /* HASTES DAS TARRAXAS E CRAVELHAS */
-
-.diagramPegStem {
-    stroke: #484848;
-    stroke-linecap: round;
-    cursor: pointer;
-    transition: stroke 140ms ease;
-}
 
 .guitarReferenceDiagram .diagramPegStem {
     stroke-width: 6;
@@ -2018,19 +1981,7 @@ body.settings-open {
     stroke: var(--sesi-red);
 }
 
-
 /* PEÇAS EXTERNAS DAS TARRAXAS E CRAVELHAS */
-
-.diagramPegKnob {
-    fill: #484848;
-    stroke: #333333;
-    stroke-width: 2;
-    cursor: pointer;
-
-    transition:
-        fill 140ms ease,
-        stroke 140ms ease;
-}
 
 .diagramPegKnob.selected {
     fill: var(--sesi-red);
@@ -2567,18 +2518,6 @@ body.settings-open {
 
 
 
-#meterPulseSummary svg {
-    width: 32px;
-    height: 38px;
-    flex-shrink: 0;
-}
-
-
-
-.customMeterControls {
-    margin-top: 16px;
-}
-
 .customMeterControls label {
     display: grid;
     gap: 6px;
@@ -2724,14 +2663,22 @@ body.settings-open {
 /* AÇÕES */
 
 .customMeterActions {
-    display: flex;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    width: 100%;
+    gap: 12px;
 }
 
 .customMeterActions button {
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+
     margin: 0;
+    padding: 12px 8px;
+
+    font-size: 16px;
 }
 
 .customMeterCancel {

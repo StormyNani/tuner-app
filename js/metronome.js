@@ -1419,12 +1419,12 @@ function installMeterControls(onApply) {
             ></p>
 
             <div class="customMeterActions">
+                <button type="submit">Aplicar</button>
+
                 <button
                     type="button"
                     class="customMeterCancel"
                 >Cancelar</button>
-
-                <button type="submit">Aplicar</button>
             </div>
         </form>
     `;
