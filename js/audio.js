@@ -164,10 +164,18 @@ function playSynthesizedTone(stringData, audioContext) {
 
     masterGain.gain.setValueAtTime(0.0001, now);
 
-    masterGain.gain.exponentialRampToValueAtTime(0.32, now + 0.02);
+    // Ataque rápido: início da nota.
+    masterGain.gain.exponentialRampToValueAtTime(0.32, now + 0.015);
 
+    // Queda inicial após o ataque.
+    masterGain.gain.exponentialRampToValueAtTime(0.22, now + 0.2);
+
+    // A nota perde intensidade gradualmente.
+    masterGain.gain.exponentialRampToValueAtTime(0.045, now + REFERENCE_TONE_DURATION - 0.25);
+
+    // Final suave.
     masterGain.gain.exponentialRampToValueAtTime(0.0001, now + REFERENCE_TONE_DURATION);
-
+    
     fundamental.connect(masterGain);
 
     harmonic.connect(harmonicGain);

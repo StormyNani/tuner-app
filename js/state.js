@@ -107,6 +107,8 @@ export const metronomeState = {
 
     volume: 1,
 
+    soundType: "electronic",
+
     audioContext: null,
 
     schedulerTimerId: null,

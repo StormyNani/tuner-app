@@ -2886,13 +2886,327 @@ body.settings-open {
     flex-shrink: 0;
 }
 
+
+
+/* Ajustes dos controles do metrônomo */
+
+#metronomeBpmAdjust {
+    grid-template-columns: 48px minmax(0, 1fr) 48px;
+    gap: 10px;
+    width: min(360px, 100%);
+    margin-inline: auto;
+}
+
+#metronomeBpmAdjust .metronomeBpmStepButton {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    margin: 0;
+}
+
+#metronomeBpmDisplay {
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    text-align: center;
+}
+
+#metronomeBpmValue {
+    font-size: clamp(42px, 12vw, 72px);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+}
+
+#metronomeBpmLabel {
+    font-size: 15px;
+    line-height: 1.2;
+}
+
+#timeSignatureButton {
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 14px;
+}
+
+#timeSignatureButtonValue {
+    min-width: 0;
+    white-space: nowrap;
+    font-size: clamp(22px, 6vw, 27px);
+    line-height: 1.2;
+}
+
+#metronomeStatus:empty {
+    display: none;
+}
+
+
+
+/* Sons do metrônomo */
+
+.metronomeSoundGroup {
+    min-width: 0;
+}
+
+.metronomeSoundGroup legend {
+    font-weight: bold;
+}
+
+.metronomeSoundOptions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.metronomeSoundOptions .metronomeSoundOption {
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    margin: 0;
+    padding: 12px 8px;
+
+    border: 2px solid #dddddd;
+    border-radius: 14px;
+
+    background: #ffffff;
+    color: var(--text-primary);
+
+    font: inherit;
+    font-weight: bold;
+
+    box-shadow: none;
+    transform: none;
+    cursor: pointer;
+}
+
+.metronomeSoundOptions .metronomeSoundOption:hover {
+    border-color: var(--sesi-red);
+    background: #fff7f7;
+}
+
+.metronomeSoundOptions .metronomeSoundOption[aria-pressed="true"] {
+    border-color: var(--sesi-red);
+    background: var(--sesi-red);
+    color: #ffffff;
+}
+
+.metronomeSoundOption:focus-visible {
+    outline: 3px solid var(--sesi-red);
+    outline-offset: 3px;
+}
+
+#metronomeSoundStatus {
+    margin: 10px 0 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+#metronomeSoundStatus:empty {
+    display: none;
+}
+
+.metronomeSoundCredits {
+    margin-top: 16px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    overflow-wrap: anywhere;
+}
+
+.metronomeSoundCredits summary {
+    cursor: pointer;
+}
+
+.metronomeSoundCredits p {
+    margin: 8px 0;
+}
+
+.metronomeSoundCredits a {
+    color: var(--sesi-red);
+}
+
+
+
+/* Títulos dos grupos dentro das caixas */
+
+fieldset.settingsGroup {
+    display: block;
+    min-width: 0;
+}
+
+fieldset.settingsGroup > legend {
+    float: left;
+    width: 100%;
+    padding: 0;
+    margin: 0 0 12px;
+    font-weight: bold;
+}
+
+fieldset.settingsGroup > legend + * {
+    clear: both;
+}
+
+fieldset.settingsGroup > .settingsOption + .settingsOption {
+    margin-top: 12px;
+}
+
+.metronomeSoundOptions {
+    margin-top: 0;
+}
+
+
+/* Configurações da tela inicial */
+
+.homeSettingsBar {
+    display: flex;
+    justify-content: center;
+
+    width: 100%;
+    margin-top: 24px;
+    margin-bottom: 0;
+}
+
+#openHomeSettings {
+    margin: 0;
+
+    color: var(--sesi-red);
+    background: transparent;
+
+    border: 1px solid var(--sesi-red);
+    box-shadow: none;
+}
+
+#homeSettingsDialog {
+    padding: 0;
+    border: 0;
+    margin: auto;
+
+    width: min(480px, calc(100% - 32px));
+    max-height: calc(100dvh - 32px);
+
+    border-radius: 22px;
+    color: var(--text-primary);
+}
+
+#homeSettingsDialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#homeSettingsDialog .settingsHeader h2 {
+    min-width: 0;
+    font-size: 22px;
+}
+
+#homeSettingsDialog .closeSettingsButton {
+    flex-shrink: 0;
+}
+
+#homeSettingsDialog .settingsSwitchOption span {
+    min-width: 0;
+}
+
+#homeSettingsDialog input[type="checkbox"] {
+    flex-shrink: 0;
+}
+
+#toggleHomeCredits {
+    width: 100%;
+    margin: 0;
+}
+
+#homeCredits {
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+#homeCredits a {
+    color: var(--sesi-dark-red);
+}
+
+#preferencesStatus:empty {
+    display: none;
+}
+
+#preferencesStatus,
+.appVersion {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+
+
+/* Botões principais */
+
+.homeToolButtons {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 20px;
+
+    width: 100%;
+    max-width: 500px;
+    margin: 12px auto 0;
+}
+
+.homeToolButtons .homeToolButton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 20px;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 220px;
+
+    margin: 0;
+    padding: 24px 16px;
+
+    border-radius: 22px;
+
+    font-size: clamp(19px, 4.5vw, 25px);
+    line-height: 1.2;
+}
+
+.homeToolIcon {
+    display: block;
+    flex-shrink: 0;
+
+    width: 86px;
+    height: 104px;
+}
+
+.homeToolButton:focus-visible {
+    outline: 3px solid var(--sesi-dark-red);
+    outline-offset: 5px;
+}
+
+@media (max-width: 420px) {
+    .homeToolButtons {
+        gap: 14px;
+    }
+
+    .homeToolButtons .homeToolButton {
+        min-height: 190px;
+        padding: 20px 10px;
+        gap: 16px;
+    }
+
+    .homeToolIcon {
+        width: 72px;
+        height: 88px;
+    }
+}
+
+@media (max-width: 300px) {
+    .homeToolButtons {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* 
-
-Som de referencia mais longo (notas dos instrumentos)
-
-Opções de Sons do metronomo
-
-Ajustar um desenho especifico para o Ukulele
 
 salvar as configurações
 

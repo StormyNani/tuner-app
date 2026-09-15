@@ -30,16 +30,117 @@
 
 
     <div id="menu">
+        <div class="homeToolButtons">
+            <button
+                id="tunerButton"
+                class="homeToolButton"
+                type="button"
+            >
+                <span>Afinador</span>
 
-        <button id="tunerButton">
-            Afinador
-        </button>
+                <svg
+                    class="homeToolIcon"
+                    viewBox="0 0 100 120"
+                    aria-hidden="true"
+                    focusable="false"
+                >
+                    <!-- Diapasão -->
+                    <path
+                        d="M30 14 V52
+                        C30 78 70 78 70 52
+                        V14"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="9"
+                        stroke-linecap="round"
+                    />
 
+                    <path
+                        d="M50 72 V105"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="9"
+                        stroke-linecap="round"
+                    />
+                </svg>
+            </button>
 
-        <button id="metronomeButton" type="button">
-            Metrônomo
-        </button>
+            <button
+                id="metronomeButton"
+                class="homeToolButton"
+                type="button"
+            >
+                <span>Metrônomo</span>
 
+                <svg
+                    class="homeToolIcon"
+                    viewBox="0 0 100 120"
+                    aria-hidden="true"
+                    focusable="false"
+                >
+                    <!-- Corpo do metrônomo -->
+                    <path
+                        d="M37 14 H63
+                           L83 105 H17 Z"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="5"
+                        stroke-linejoin="round"
+                    />
+
+                    <!-- Escala -->
+                    <path
+                        d="M50 27 V79
+                           M46 33 H54
+                           M46 44 H54
+                           M46 55 H54"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                    />
+
+                    <!-- Haste inclinada -->
+                    <path
+                        d="M50 88 L72 32"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="5"
+                        stroke-linecap="round"
+                    />
+
+                    <!-- Peso da haste -->
+                    <rect
+                        x="59"
+                        y="43"
+                        width="14"
+                        height="12"
+                        rx="2"
+                        fill="currentColor"
+                        transform="rotate(21 66 49)"
+                    />
+
+                    <circle
+                        cx="50"
+                        cy="88"
+                        r="5"
+                        fill="currentColor"
+                    />
+                </svg>
+            </button>
+        </div>
+
+        <div class="homeSettingsBar">
+            <button
+                id="openHomeSettings"
+                type="button"
+                aria-haspopup="dialog"
+                aria-controls="homeSettingsDialog"
+                aria-expanded="false"
+            >
+                ⚙ Configurações
+            </button>
+        </div>
     </div>
 
 
@@ -221,12 +322,12 @@
         >
         </div>
 
-
+<!--
         <p id="metronomeBeatHelp">
             Clique em uma barra para alterar:
             forte, meio forte, fraco ou silêncio.
         </p>
-
+-->
 
         <!-- BPM -->
 
@@ -279,9 +380,7 @@
         </button>
        
         
-        <p id="metronomeStatus">
-            Tempos: 4
-        </p>
+        <p id="metronomeStatus" role="status"></p>
 
 
 
@@ -958,6 +1057,54 @@
 
         <div class="settingsContent">
 
+            <fieldset class="settingsGroup metronomeSoundGroup">
+                <legend>Som do metrônomo</legend>
+
+                <div class="metronomeSoundOptions">
+                    <button
+                        type="button"
+                        class="metronomeSoundOption"
+                        data-metronome-sound="electronic"
+                        aria-pressed="true"
+                    >
+                        Eletrônico
+                    </button>
+
+                    <button
+                        type="button"
+                        class="metronomeSoundOption"
+                        data-metronome-sound="sine"
+                        aria-pressed="false"
+                    >
+                        Senoide
+                    </button>
+
+                    <button
+                        type="button"
+                        class="metronomeSoundOption"
+                        data-metronome-sound="wood"
+                        aria-pressed="false"
+                    >
+                        Madeira
+                    </button>
+
+                    <button
+                        type="button"
+                        class="metronomeSoundOption"
+                        data-metronome-sound="snare"
+                        aria-pressed="false"
+                    >
+                        Caixa
+                    </button>
+                </div>
+<!--        
+                <p class="metronomeSettingHelp">
+                    Selecione para ouvir os acentos: forte, médio e fraco.
+                </p>
+-->
+                <p id="metronomeSoundStatus" role="status"></p>
+
+            </fieldset>
 
             <!-- VOLUME -->
 
@@ -994,10 +1141,11 @@
 
                 </div>
 
-
+<!--
                 <p class="metronomeSettingHelp">
                     Controla o volume dos tempos e das subdivisões.
                 </p>
+-->
 
             </div>
 
@@ -1016,6 +1164,114 @@
     </p>
 
 </footer>
+
+
+
+<dialog
+    id="homeSettingsDialog"
+    class="settingsDialog"
+    aria-labelledby="homeSettingsTitle"
+>
+    <div class="settingsHeader">
+        <h2 id="homeSettingsTitle">Configurações</h2>
+
+        <button
+            id="closeHomeSettings"
+            class="closeSettingsButton"
+            type="button"
+            aria-label="Fechar configurações"
+        >×</button>
+    </div>
+
+    <div class="settingsContent">
+        <div class="settingsGroup">
+            <label
+                class="settingsSwitchOption"
+                for="saveDevicePreferences"
+            >
+                <span>Salvar preferências neste dispositivo</span>
+
+                <input
+                    id="saveDevicePreferences"
+                    type="checkbox"
+                    aria-describedby="savePreferencesHelp"
+                >
+            </label>
+
+            <p
+                id="savePreferencesHelp"
+                class="metronomeSettingHelp"
+            >
+                Lembra suas preferências neste navegador.
+                Ao desativar, as preferências salvas são apagadas.
+            </p>
+
+            <p id="preferencesStatus" role="status"></p>
+        </div>
+
+        <div class="settingsGroup">
+            <button
+                id="toggleHomeCredits"
+                type="button"
+                aria-expanded="false"
+                aria-controls="homeCredits"
+            >
+                Créditos
+            </button>
+
+            <div id="homeCredits" hidden>
+                <p>
+                    <strong>Prato:</strong>
+                    <a
+                        href="https://freesound.org/people/-zin-/sounds/34822/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >crash_3_hit_1_cut.wav — -zin-</a>.
+                    Licença
+                    <a
+                        href="https://creativecommons.org/licenses/by/3.0/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >CC BY 3.0</a>.
+                    Reprodução com redução de um semitom,
+                    ajustes de volume e duração e saída gradual.
+                </p>
+
+                <p>
+                    <strong>Madeira:</strong>
+                    <a
+                        href="https://freesound.org/people/hollandm/sounds/692818/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >Woodblock-hard.wav — hollandm</a>.
+                </p>
+
+                <p>
+                    <strong>Caixa:</strong>
+                    <a
+                        href="https://freesound.org/people/RutgerMuller/sounds/50759/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >Snare 1.wav — RutgerMuller</a>.
+                </p>
+
+                <p>
+                    Madeira e Caixa:
+                    <a
+                        href="https://creativecommons.org/publicdomain/zero/1.0/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >CC0 1.0</a>.
+                    Reprodução com ajustes de volume e duração.
+                </p>
+
+                <p class="appVersion">
+                    SESI Tuner — versão 1.0 (em testes)
+                </p>
+            </div>
+        </div>
+    </div>
+</dialog>
 
 
 

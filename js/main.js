@@ -38,6 +38,11 @@ import {
     renderUkuleleDiagram
 } from "./instrumentDiagram.js";
 
+import {
+    loadPreferences,
+    initializeHomeSettings
+} from "./preferences.js";
+
 
 
 
@@ -106,7 +111,22 @@ const referenceSoundsEnabled = document.getElementById("referenceSoundsEnabled")
 let lastFocusedElement = null;
 
 
+loadPreferences();
+
+noteNameOptions.forEach(function (option) {
+    option.checked = option.value === appState.noteNameStyle;
+});
+
+accidentalOptions.forEach(function (option) {
+    option.checked = option.value === appState.accidentalStyle;
+});
+
+settingsReference.value = String(appState.referenceA4);
+
+referenceSoundsEnabled.checked = appState.referenceSoundEnabled;
+
 showTechnicalInfo.checked = appState.showTechnicalInfo;
+
 applyTechnicalInfoVisibility();
 
 
@@ -114,6 +134,7 @@ canvas.width = 300;
 canvas.height = 100;
 
 initializeMetronome();
+initializeHomeSettings();
 
 window.addEventListener("resize", function () {
 

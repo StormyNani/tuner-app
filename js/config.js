@@ -21,17 +21,13 @@ export const SILENCE_HOLD_TIME = 300;
 
 // CONFIGURAÇÕES DOS SONS DE REFERÊNCIA
 
-export const REFERENCE_TONE_DURATION = 1.4; 
-
+export const REFERENCE_TONE_DURATION = 2.5;
 
 export const REFERENCE_SAMPLE_A4 = 442;
 
-export const STRING_REPEAT_BPM = 160;
-export const STRING_REPEAT_BEATS = 4;
+// Intervalo entre os inícios das notas, em milissegundos.
 
-export const STRING_REPEAT_INTERVAL = (60000 / STRING_REPEAT_BPM) * STRING_REPEAT_BEATS;
-
-
+export const STRING_REPEAT_INTERVAL = REFERENCE_TONE_DURATION * 1000 + 200;
 
 // MODOS DO AFINADOR
 

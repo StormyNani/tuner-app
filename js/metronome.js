@@ -4,7 +4,9 @@ import {
     metronomeState
 } from "./state.js";
 
-
+import {
+    savePreferences
+} from "./preferences.js";
 
 
 // ELEMENTOS DO METRÃ”NOMO   
@@ -458,7 +460,7 @@ function setBeatsPerMeasure(newBeatCount, newStrengths = null) {
     
     } else {
 
-        metronomeStatus.textContent = "Tempos: " + limitedBeatCount;
+        metronomeStatus.textContent = "";
     }
 }
 
@@ -577,36 +579,68 @@ function setSubdivision(newSubdivision) {
 
 
 
+function getDefaultBeatStrengths(numerator, denominator) {
+    const strengths = Array(numerator).fill("weak");
+
+    strengths[0] = "strong";
+
+    // Convenção inicial para compassos compostos.
+    // Cada barra representa uma unidade do denominador.
+    const compound =
+        [6, 9, 12].includes(numerator) &&
+        [4, 8, 16, 32, 64].includes(denominator);
+
+    if (compound) {
+        const groupCount = numerator / 3;
+
+        for (let group = 1; group < groupCount; group++) {
+            const index = group * 3;
+
+            // Binário composto: destaca o segundo grupo
+            // em relação às divisões internas.
+            if (groupCount === 2) {
+                strengths[index] = "medium";
+            }
+
+            // Ternário composto: identifica os outros grupos.
+            if (groupCount === 3) {
+                strengths[index] = "medium";
+            }
+
+            // Quaternário composto: acento secundário
+            // no início do terceiro grupo.
+            if (groupCount === 4 && group === 2) {
+                strengths[index] = "medium";
+            }
+        }
+
+        return strengths;
+    }
+
+    // Quaternário simples.
+    if (numerator === 4) {
+        strengths[2] = "medium";
+    }
+
+    return strengths;
+}
+
+
+
 function setTimeSignature(newTimeSignature) {
     const plan = getMeterPlan(newTimeSignature);
 
-    if (!plan) return;
+    if (!plan) {
+        return;
+    }
 
     metronomeState.timeSignature = plan.signature;
 
-    const strengths = Array.from(
-        { length: plan.beats },
-        function (_, index) {
-            if (index === 0) return "strong";
-
-            if (
-                plan.denominator === 8 &&
-                plan.numerator >= 6 &&
-                plan.numerator % 3 === 0 &&
-                index % 3 === 0
-            ) {
-                return "medium";
-            }
-
-            if (plan.numerator === 4 && index === 2) {
-                return "medium";
-            }
-
-            return "weak";
-        }
+    const strengths = getDefaultBeatStrengths(
+        plan.numerator,
+        plan.denominator
     );
 
-    // Atualiza também as figuras ao trocar o denominador.
     setSubdivision(metronomeState.subdivision);
 
     setBeatsPerMeasure(plan.beats, strengths);
@@ -617,8 +651,8 @@ function setTimeSignature(newTimeSignature) {
 }
 
 
-// TAP TEMPO
 
+// TAP TEMPO
 function toggleTapTempoPanel() {
 
     const shouldOpen = tapTempoPanel.hidden;
@@ -712,6 +746,7 @@ function openMetronomeSettings() {
 
 
 function closeMetronomeSettings() {
+    stopMetronomePreview();
 
     if (!metronomeSettingsOpen) {
         return;
@@ -737,6 +772,46 @@ function closeMetronomeSettings() {
 
 
 
+function organizeMetronomeControls() {
+    const startButton =
+        document.getElementById("toggleMetronome");
+
+    const speedControl =
+        document.getElementById("metronomeBpmControl");
+
+    const tapArea =
+        document.getElementById("tapTempoArea");
+
+    // Aproxima velocidade e Tap Tempo do mostrador de BPM.
+    startButton.before(speedControl, tapArea);
+
+    const rhythmControls =
+        document.getElementById("metronomeRhythmControls");
+
+    const meterButton =
+        document.getElementById("timeSignatureButton");
+
+    const divisionButton =
+        document.getElementById("subdivisionButton");
+
+    // Primeiro o compasso, depois sua subdivisão.
+    rhythmControls.insertBefore(
+        meterButton,
+        divisionButton
+    );
+
+    const beatsControl =
+        document.getElementById("metronomeBeatsControl");
+
+    const rhythmArea =
+        document.getElementById("metronomeRhythmArea");
+
+    // Coloca o controle de tempos acima de Compasso e Subdivisão.
+    rhythmArea.before(beatsControl);
+}
+
+
+
 
 // INICIALIZAÃ‡ÃƒO
 
@@ -746,17 +821,29 @@ export function initializeMetronome() {
         return;
     }
 
+    const initialStrengths = [...metronomeState.beatStrengths];
+
     initialized = true;
+
+    organizeMetronomeControls();
+
+    initializeMetronomeSounds();
 
     updateMeterControls = installMeterControls(setTimeSignature);
 
-    setMetronomeBpm(metronomeState.bpm);
+    setMetronomeBpm(metronomeState.bpm, false);
 
     setBeatsPerMeasure(metronomeState.beatsPerMeasure);
 
     setSubdivision(metronomeState.subdivision);
 
     setTimeSignature(metronomeState.timeSignature);
+
+    if (initialStrengths.length === metronomeState.beatsPerMeasure) {
+        metronomeState.beatStrengths = initialStrengths;
+
+        renderBeatIndicators();
+    }
 
     setMetronomeVolume(metronomeState.volume * 100);
 
@@ -943,69 +1030,448 @@ async function getMetronomeAudioContext() {
 
 
 // SOM DO CLIQUE
+/*
+Créditos dos sons — CC0 1.0
 
-function scheduleTone(frequency, volume, scheduledTime, duration) {
+Madeira:
+Woodblock-hard.wav — hollandm
+https://freesound.org/people/hollandm/sounds/692818/
 
+Caixa:
+Snare 1.wav — RutgerMuller
+https://freesound.org/people/RutgerMuller/sounds/50759/
+
+Licença:
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Reprodução com ajustes de volume, duração e,
+no acento forte da Madeira, altura.
+*/
+
+const METRONOME_SOUNDS = {
+    electronic: {
+        label: "Eletrônico",
+        file: null,
+        wave: "square",
+        gain: 1
+    },
+
+    sine: {
+        label: "Senoide",
+        file: null,
+        wave: "sine",
+        gain: 1.35
+    },
+
+    wood: {
+        label: "Madeira",
+        file: "madeira.wav",
+        gain: 1.3
+    },
+
+    snare: {
+        label: "Caixa",
+        file: "caixa.wav",
+        gain: 1.4
+    },
+
+    cymbal: {
+    label: "Prato",
+    file: "prato.wav",
+    gain: 1
+}
+};
+
+const metronomeSampleCache = new Map();
+
+const metronomePreviewNodes = new Set();
+
+let metronomeSoundRequestId = 0;
+
+let activeMetronomeSample = null;
+
+let metronomeCymbalSample = null;
+
+// Um semitom abaixo da gravação original.
+const CYMBAL_PLAYBACK_RATE = 2 ** (-1 / 12);
+
+// Ponto de partida para equilibrar o prato com a caixa.
+const CYMBAL_GAIN = 1;
+
+
+// CANCELAMENTO DA PRÉVIA
+
+function stopMetronomePreview() {
+    metronomeSoundRequestId++;
+
+    metronomePreviewNodes.forEach(function (node) {
+        try {
+            node.stop();
+        } catch (error) {
+        }
+    });
+
+    metronomePreviewNodes.clear();
+
+    document.getElementById(
+        "metronomeSoundStatus"
+    ).textContent = "";
+}
+
+
+// CARREGAMENTO DOS ÁUDIOS
+async function loadMetronomeSample(soundType, audioContext) {
+    const sound = METRONOME_SOUNDS[soundType];
+
+    if (!sound) {
+        throw new Error("Som desconhecido.");
+    }
+
+    if (!sound.file) {
+        return null;
+    }
+
+    if (!metronomeSampleCache.has(soundType)) {
+        const loading = (async function () {
+            const url = new URL(
+                "../sounds/" + sound.file,
+                import.meta.url
+            );
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(
+                    "Não foi possível carregar " + sound.file
+                );
+            }
+
+            const data = await response.arrayBuffer();
+
+            return await audioContext.decodeAudioData(data);
+        })();
+
+        metronomeSampleCache.set(soundType, loading);
+    }
+
+    let buffer;
+
+    try {
+        buffer = await metronomeSampleCache.get(soundType);
+    } catch (error) {
+        metronomeSampleCache.delete(soundType);
+        throw error;
+    }
+
+    if (soundType === "snare") {
+        metronomeCymbalSample = await loadMetronomeSample(
+            "cymbal",
+            audioContext
+        );
+    }
+
+    return buffer;
+}
+
+
+// SELEÇÃO VISUAL
+
+function updateMetronomeSoundButtons() {
+    document.querySelectorAll(
+        "[data-metronome-sound]"
+    ).forEach(function (button) {
+        const selected =
+            button.dataset.metronomeSound ===
+            metronomeState.soundType;
+
+        button.setAttribute(
+            "aria-pressed",
+            String(selected)
+        );
+    });
+}
+
+
+// EVENTOS DAS OPÇÕES DE SOM
+
+function initializeMetronomeSounds() {
+    updateMetronomeSoundButtons();
+
+    document.querySelectorAll(
+        "[data-metronome-sound]"
+    ).forEach(function (button) {
+        button.addEventListener("click", async function () {
+            const soundType = button.dataset.metronomeSound;
+
+            if (!Object.prototype.hasOwnProperty.call(
+                METRONOME_SOUNDS,
+                soundType
+            )) {
+                return;
+            }
+
+            stopMetronome();
+
+            const requestId = metronomeSoundRequestId;
+
+            const status = document.getElementById(
+                "metronomeSoundStatus"
+            );
+
+            status.textContent = "Carregando som…";
+
+            try {
+                const audioContext =
+                    await getMetronomeAudioContext();
+
+                if (requestId !== metronomeSoundRequestId) {
+                    return;
+                }
+
+                const buffer = await loadMetronomeSample(
+                    soundType,
+                    audioContext
+                );
+
+                if (
+                    requestId !== metronomeSoundRequestId ||
+                    !metronomeSettingsOpen
+                ) {
+                    return;
+                }
+
+                activeMetronomeSample = buffer;
+
+                metronomeState.soundType = soundType;
+
+                savePreferences();
+
+                updateMetronomeSoundButtons();
+
+                status.textContent = "";
+
+                const startTime =
+                    audioContext.currentTime + 0.05;
+
+                ["strong", "medium", "weak"].forEach(
+                    function (strength, index) {
+                        const settings =
+                            BEAT_STRENGTH_SETTINGS[strength];
+
+                            scheduleTone(
+                                settings.frequency,
+                                settings.volume,
+                                startTime + index * 0.45,
+                                CLICK_DURATION,
+                                true,
+                                strength
+                            );
+                    }
+                );
+            } catch (error) {
+                if (requestId !== metronomeSoundRequestId) {
+                    return;
+                }
+
+                console.error(
+                    "Erro ao carregar som:",
+                    error
+                );
+
+                status.textContent =
+                    "Não foi possível carregar o som. " +
+                    "Confira os arquivos na pasta sounds.";
+            }
+        });
+    });
+}
+
+
+// REPRODUÇÃO DAS BATIDAS E DA PRÉVIA
+function scheduleTone(
+    frequency,
+    volume,
+    scheduledTime,
+    duration,
+    preview = false,
+    strength = "weak"
+) {
     const audioContext = metronomeState.audioContext;
 
-    if (audioContext === null || !metronomeState.running) {
-        
+    if (
+        !audioContext ||
+        (!preview && !metronomeState.running) ||
+        volume <= 0
+    ) {
         return;
     }
 
-    const oscillator = audioContext.createOscillator();
+    const sound = METRONOME_SOUNDS[metronomeState.soundType];
+
+    if (!sound || (sound.file && !activeMetronomeSample)) {
+        return;
+    }
+
+    const isSubdivision =
+        duration === SUBDIVISION_CLICK_DURATION;
+
+    const isStrong =
+        strength === "strong" && !isSubdivision;
 
     const gain = audioContext.createGain();
 
-    oscillator.type = "square";
+    let source;
+    let playbackDuration;
 
+    if (sound.file) {
+        if (!activeMetronomeSample) {
+            return;
+        }
 
-    oscillator.frequency.setValueAtTime(frequency, scheduledTime);
+        const subdivisionClick =
+            duration === SUBDIVISION_CLICK_DURATION;
 
+        const strongClick =
+            !subdivisionClick &&
+            frequency === BEAT_STRENGTH_SETTINGS.strong.frequency;
 
-    gain.gain.setValueAtTime(0.0001, scheduledTime);
+        const useCymbal =
+            metronomeState.soundType === "snare" &&
+            strongClick &&
+            metronomeCymbalSample !== null;
 
-    gain.gain.exponentialRampToValueAtTime(volume, scheduledTime + 0.002);
+        source = audioContext.createBufferSource();
 
-    gain.gain.exponentialRampToValueAtTime(0.0001, scheduledTime + duration);
+        source.buffer = useCymbal
+            ? metronomeCymbalSample
+            : activeMetronomeSample;
 
-    oscillator.connect(gain);
+        const playbackRate = useCymbal
+            ? CYMBAL_PLAYBACK_RATE
+            : 1;
 
-    if (metronomeMasterGain !== null) {
+        source.playbackRate.setValueAtTime(
+            playbackRate,
+            scheduledTime
+        );
 
-        gain.connect(metronomeMasterGain);
+        const naturalDuration =
+            source.buffer.duration / playbackRate;
+
+        // O prato ganha mais espaço para soar.
+        // Em andamentos rápidos, termina antes da próxima pulsação.
+        const maximumDuration = useCymbal
+            ? Math.min(0.35, (60 / metronomeState.bpm) * 0.8)
+            : subdivisionClick
+                ? 0.08
+                : 0.18;
+
+        playbackDuration = Math.min(
+            naturalDuration,
+            maximumDuration
+        );
+
+        const woodAccent =
+            metronomeState.soundType === "wood" && strongClick
+                ? 1.2
+                : 1;
+
+        const level = useCymbal
+            ? volume * CYMBAL_GAIN
+            : volume * sound.gain * woodAccent;
+
+        const fadeDuration = Math.min(
+            useCymbal ? 0.12 : 0.02,
+            playbackDuration
+        );
+
+        gain.gain.setValueAtTime(
+            level,
+            scheduledTime
+        );
+
+        gain.gain.setValueAtTime(
+            level,
+            scheduledTime + playbackDuration - fadeDuration
+        );
+
+        gain.gain.linearRampToValueAtTime(
+            0,
+            scheduledTime + playbackDuration
+        );
 
     } else {
 
-        gain.connect(audioContext.destination);
+        source = audioContext.createOscillator();
+        source.type = sound.wave;
+
+        const isSine = sound.wave === "sine";
+
+        // A senoide usa uma região menos aguda.
+        const toneFrequency = isSine
+            ? frequency * 0.75
+            : frequency;
+
+        source.frequency.setValueAtTime(
+            toneFrequency,
+            scheduledTime
+        );
+
+        const toneDuration = isSine
+            ? (isSubdivision ? 0.045 : 0.085)
+            : duration;
+
+        const attackDuration = isSine ? 0.004 : 0.002;
+
+        const level = volume * sound.gain;
+
+        playbackDuration = toneDuration + 0.01;
+
+        gain.gain.setValueAtTime(
+            0.0001,
+            scheduledTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            level,
+            scheduledTime + attackDuration
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            0.0001,
+            scheduledTime + toneDuration
+        );
     }
 
-    oscillator.start(scheduledTime);
+    source.connect(gain);
+    gain.connect(metronomeMasterGain);
 
-    oscillator.stop(scheduledTime + duration + 0.01);
+    if (preview) {
+        metronomePreviewNodes.add(source);
+    } else {
+        scheduledOscillators.push(source);
+    }
 
-    scheduledOscillators.push(oscillator);
+    source.onended = function () {
+        metronomePreviewNodes.delete(source);
 
-    oscillator.onended = function () {
+        scheduledOscillators =
+            scheduledOscillators.filter(function (node) {
+                return node !== source;
+            });
 
-        scheduledOscillators = scheduledOscillators.filter(function (activeOscillator) {
-
-            return (activeOscillator !== oscillator);
-        });
-
-
-        try {
-
-            oscillator.disconnect();
-
-            gain.disconnect();
-
-        } catch (error) {
-
-        }
-
+        source.disconnect();
+        gain.disconnect();
     };
+
+    source.start(scheduledTime);
+
+    source.stop(
+        scheduledTime + playbackDuration
+    );
 }
+
+
 
 
 function scheduleClick(beatIndex, scheduledTime) {
@@ -1033,9 +1499,14 @@ function scheduleClick(beatIndex, scheduledTime) {
         return;
     }
 
-
-    scheduleTone(strengthSettings.frequency, strengthSettings.volume, scheduledTime, CLICK_DURATION);
-
+    scheduleTone(
+        strengthSettings.frequency,
+        strengthSettings.volume,
+        scheduledTime,
+        CLICK_DURATION,
+        false,
+        strength
+    );
 
     const subdivision = Number(metronomeState.subdivision) || 1;
 
@@ -1169,48 +1640,78 @@ function resetBeatIndicators() {
 // INICIAR O METRÃ”NONO
 
 async function startMetronome() {
-
-    if (metronomeState.running || startRequestInProgress) {
-
+    if (
+        metronomeState.running ||
+        startRequestInProgress
+    ) {
         return;
     }
 
     startRequestInProgress = true;
 
+    stopMetronomePreview();
+
+    const requestId = metronomeSoundRequestId;
+
     try {
-        
-        const audioContext = await getMetronomeAudioContext();
+        const audioContext =
+            await getMetronomeAudioContext();
+
+        if (requestId !== metronomeSoundRequestId) {
+            return;
+        }
+
+        const buffer = await loadMetronomeSample(
+            metronomeState.soundType,
+            audioContext
+        );
+
+        if (requestId !== metronomeSoundRequestId) {
+            return;
+        }
+
+        activeMetronomeSample = buffer;
 
         metronomeState.running = true;
 
         metronomeState.currentBeat = 0;
 
-        metronomeState.nextBeatTime = audioContext.currentTime + METRONOME_START_DELAY;
+        metronomeState.nextBeatTime =
+            audioContext.currentTime +
+            METRONOME_START_DELAY;
 
         visualBeatQueue = [];
 
         toggleMetronomeButton.textContent = "Parar";
 
-        toggleMetronomeButton.setAttribute("aria-pressed", "true");
+        toggleMetronomeButton.setAttribute(
+            "aria-pressed",
+            "true"
+        );
 
         toggleMetronomeButton.classList.add("active");
 
-        metronomeStatus.textContent = "Tocando em " + metronomeState.bpm + " BPM â€” " + metronomeState.beatsPerMeasure + 
-            (metronomeState.beatsPerMeasure === 1 ? " tempo" : " tempos"
-        );
-    
+        metronomeStatus.textContent = "";
+
         scheduler();
 
         updateBeatAnimation();
     } catch (error) {
+        if (requestId !== metronomeSoundRequestId) {
+            return;
+        }
 
-        console.error("Erro ao iniciar o metrÃ´nomo:", error);
-
-        metronomeStatus.textContent = "NÃ£o foi possÃ­vel iniciar o Ã¡udio";
+        console.error(
+            "Erro ao iniciar o metrônomo:",
+            error
+        );
 
         stopMetronome();
-    } finally {
 
+        metronomeStatus.textContent =
+            "Não foi possível iniciar o áudio. " +
+            "Confira o som selecionado.";
+    } finally {
         startRequestInProgress = false;
     }
 }
@@ -1221,6 +1722,7 @@ async function startMetronome() {
 // PARAR O METRÃ”NOMO
 
 export function stopMetronome() {
+    stopMetronomePreview();
 
     metronomeState.running = false;
 
@@ -1262,17 +1764,19 @@ export function stopMetronome() {
 
     toggleMetronomeButton.classList.remove("active");
 
-    metronomeStatus.textContent = "Tempos: " + metronomeState.beatsPerMeasure;
+    metronomeStatus.textContent = "";
 
     resetBeatIndicators();
 }
 
 
-
 function getMeterPlan(signature) {
-    if (!/^\d+\/\d+$/.test(signature)) return null;
+    if (!/^\d+\/\d+$/.test(signature)) {
+        return null;
+    }
 
-    const [numerator, denominator] = signature.split("/").map(Number);
+    const [numerator, denominator] =
+        signature.split("/").map(Number);
 
     if (
         numerator < 1 ||
@@ -1290,7 +1794,6 @@ function getMeterPlan(signature) {
         note: denominator
     };
 }
-
 
 
 function installMeterControls(onApply) {
@@ -1372,7 +1875,7 @@ function installMeterControls(onApply) {
 
                 <div class="customMeterFields">
                     <label>
-                        Número superior
+                        Numerador
 
                         <input
                             name="numerator"
@@ -1387,7 +1890,7 @@ function installMeterControls(onApply) {
                     </label>
 
                     <fieldset class="customMeterDenominators">
-                        <legend>Número inferior</legend>
+                        <legend>Denominador</legend>
 
                         <div class="customMeterNoteOptions">
                             ${[1, 2, 4, 8, 16, 32, 64].map(n => `
@@ -1511,7 +2014,7 @@ function installMeterControls(onApply) {
 
     document.querySelector(
         'label[for="metronomeBeats"]'
-    ).textContent = "Número superior";
+    ).textContent = "Numerador";
 
     document.querySelector(
         "#metronomeBeatsLimits span:last-child"
@@ -1532,7 +2035,8 @@ function installMeterControls(onApply) {
         ).textContent = plan.numerator;
 
         buttonValue.textContent = plan.signature;
-        subtitle.textContent = names[plan.note] + " = BPM";
+        subtitle.textContent = "";
+        subtitle.hidden = true;
 
         buttons.forEach(function (button) {
             const selected =
