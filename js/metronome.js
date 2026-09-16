@@ -653,13 +653,47 @@ function setTimeSignature(newTimeSignature) {
 
 
 // TAP TEMPO
+function closeTapTempoPanel(restoreFocus = false) {
+    tapTempoPanel.hidden = true;
+
+    toggleTapTempoButton.setAttribute(
+        "aria-expanded",
+        "false"
+    );
+
+    if (restoreFocus) {
+        toggleTapTempoButton.focus();
+    }
+}
+
+
 function toggleTapTempoPanel() {
+    if (!tapTempoPanel.hidden) {
+        closeTapTempoPanel(true);
+        return;
+    }
 
-    const shouldOpen = tapTempoPanel.hidden;
+    closeRhythmPanels();
 
-    tapTempoPanel.hidden = !shouldOpen;
+    tapTimes = [];
+    tapTempoInfo.textContent = "Faça pelo menos 2 toques";
 
-    toggleTapTempoButton.setAttribute("aria-expanded", String(shouldOpen));
+    tapTempoPanel.hidden = false;
+
+    toggleTapTempoButton.setAttribute(
+        "aria-expanded",
+        "true"
+    );
+
+    tapTempoButton.focus({ preventScroll: true });
+
+    // Se o painel ficar acima da área visível,
+    // ajusta a rolagem para mostrá-lo.
+    tapTempoPanel.scrollIntoView({
+        block: "nearest",
+        inline: "nearest",
+        behavior: "auto"
+    });
 }
 
 
@@ -771,7 +805,6 @@ function closeMetronomeSettings() {
 }
 
 
-
 function organizeMetronomeControls() {
     const startButton =
         document.getElementById("toggleMetronome");
@@ -782,8 +815,26 @@ function organizeMetronomeControls() {
     const tapArea =
         document.getElementById("tapTempoArea");
 
-    // Aproxima velocidade e Tap Tempo do mostrador de BPM.
-    startButton.before(speedControl, tapArea);
+    let transport =
+        document.getElementById("metronomeTransport");
+
+    if (!transport) {
+        transport = document.createElement("div");
+        transport.id = "metronomeTransport";
+
+        startButton.before(transport);
+    }
+
+    transport.before(speedControl);
+
+    transport.append(startButton, tapArea);
+
+    toggleTapTempoButton.textContent = "TAP";
+
+    toggleTapTempoButton.setAttribute(
+        "aria-label",
+        "Abrir Tap Tempo para definir a velocidade por toques"
+    );
 
     const rhythmControls =
         document.getElementById("metronomeRhythmControls");
@@ -794,7 +845,6 @@ function organizeMetronomeControls() {
     const divisionButton =
         document.getElementById("subdivisionButton");
 
-    // Primeiro o compasso, depois sua subdivisão.
     rhythmControls.insertBefore(
         meterButton,
         divisionButton
@@ -806,7 +856,6 @@ function organizeMetronomeControls() {
     const rhythmArea =
         document.getElementById("metronomeRhythmArea");
 
-    // Coloca o controle de tempos acima de Compasso e Subdivisão.
     rhythmArea.before(beatsControl);
 }
 
@@ -942,6 +991,25 @@ export function initializeMetronome() {
         registerTap(); 
     });
 
+    document.addEventListener("click", function (event) {
+        const tapArea = document.getElementById("tapTempoArea");
+
+        if (
+            !tapTempoPanel.hidden &&
+            !tapArea.contains(event.target)
+        ) {
+            closeTapTempoPanel();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (
+            event.key === "Escape" &&
+            !tapTempoPanel.hidden
+        ) {
+            closeTapTempoPanel(true);
+        }
+    });
 
     resetBeatIndicators();
 }
@@ -1079,7 +1147,13 @@ const METRONOME_SOUNDS = {
     label: "Prato",
     file: "prato.wav",
     gain: 1
-}
+    },
+
+    classic: {
+    label: "Clássico",
+    file: "classico.wav",
+    gain: 1.3
+    },
 };
 
 const metronomeSampleCache = new Map();
@@ -1722,6 +1796,9 @@ async function startMetronome() {
 // PARAR O METRÃ”NOMO
 
 export function stopMetronome() {
+
+    closeTapTempoPanel();
+
     stopMetronomePreview();
 
     metronomeState.running = false;

@@ -41,7 +41,8 @@ const metroRules = {
         "electronic",
         "sine",
         "wood",
-        "snare"
+        "snare",
+        "classic"
     ]),
 
     timeSignature: value =>
