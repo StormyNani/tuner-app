@@ -8,7 +8,22 @@
 
     <title>SESI Tuner</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20260919-1">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <meta name="theme-color" content="#d71920">
+
+    <link
+        rel="icon"
+        type="image/png"
+        sizes="192x192"
+        href="./icons/icon-192.png"
+    >
+
+    <link
+        rel="apple-touch-icon"
+        sizes="180x180"
+        href="./icons/apple-touch-icon.png"
+    >
 
 </head>
 
@@ -1219,6 +1234,12 @@
             <p id="preferencesStatus" role="status"></p>
         </div>
 
+        <p
+            id="offlineStatus"
+            class="metronomeSettingHelp"
+            role="status"
+        ></p>
+
         <div class="settingsGroup">
             <button
                 id="toggleHomeCredits"
@@ -1306,11 +1327,9 @@
 </dialog>
 
 
+<script type="module" src="js/main.js"></script>
+<script type="module" src="js/pwa.js"></script>
 
-<script 
-    type="module"
-    src="js/main.js"
-    ></script>
 
 </body>
 

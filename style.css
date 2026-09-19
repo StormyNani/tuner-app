@@ -2590,37 +2590,6 @@ body.settings-open {
     stroke-linecap: butt;
 }
 
-
-
-.customMeterControls label {
-    display: grid;
-    gap: 6px;
-    min-width: 0;
-}
-
-.customMeterControls input,
-.customMeterControls select {
-    width: 100%;
-    min-width: 0;
-
-    padding: 9px;
-
-    font: inherit;
-    font-size: 16px;
-
-    color: var(--text-primary);
-    background-color: white;
-
-    border: 1px solid var(--border);
-    border-radius: 9px;
-}
-
-.customMeterControls button {
-    margin: 0;
-}
-
-
-
 /* BOTÃO DO COMPASSO PERSONALIZADO */
 
 .customMeterOpenButton {
@@ -3080,25 +3049,6 @@ body.settings-open {
     display: none;
 }
 
-.metronomeSoundCredits {
-    margin-top: 16px;
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--text-secondary);
-    overflow-wrap: anywhere;
-}
-
-.metronomeSoundCredits summary {
-    cursor: pointer;
-}
-
-.metronomeSoundCredits p {
-    margin: 8px 0;
-}
-
-.metronomeSoundCredits a {
-    color: var(--sesi-red);
-}
 
 
 
@@ -3336,25 +3286,31 @@ fieldset.settingsGroup > .settingsOption + .settingsOption {
 }
 
 
-
 /* Numerador do compasso personalizado */
 .customMeterNumerator {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
     min-width: 0;
 }
 
 .customMeterNumerator > label {
+    grid-column: 1 / -1;
     display: block;
-    margin-bottom: 10px;
+    margin: 0 0 2px;
     font-weight: 600;
 }
 
 .customMeterStepper {
     display: grid;
-    grid-template-columns: 44px minmax(40px, 1fr) 44px;
+    grid-template-columns: 44px minmax(24px, 1fr) 44px;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
+
     width: 100%;
     max-width: 220px;
+    min-width: 0;
 }
 
 .customMeterStepper button {
@@ -3368,15 +3324,42 @@ fieldset.settingsGroup > .settingsOption + .settingsOption {
     margin: 0;
     padding: 0;
 
-    border: 1px solid #d71920;
+    border: 1px solid var(--sesi-red);
     border-radius: 12px;
-    background: #fff;
-    color: #d71920;
-    box-shadow: none;
+    background: white;
+    color: var(--sesi-red);
 
+    box-shadow: none;
     font-size: 1.8rem;
     line-height: 1;
     touch-action: manipulation;
+}
+
+/* Evita o fundo escuro persistente após tocar no celular. */
+.customMeterStepper button:hover:not(:disabled) {
+    background: white;
+    color: var(--sesi-red);
+    box-shadow: none;
+    transform: none;
+}
+
+/* Destaque ao passar o mouse no computador. */
+@media (hover: hover) and (pointer: fine) {
+    .customMeterStepper button:hover:not(:disabled) {
+        background: var(--sesi-red);
+        color: white;
+    }
+}
+
+.customMeterStepper button:active:not(:disabled) {
+    background: var(--sesi-dark-red);
+    color: white;
+    transform: none;
+}
+
+.customMeterStepper button:focus-visible {
+    outline: 2px solid var(--sesi-dark-red);
+    outline-offset: 3px;
 }
 
 .customMeterStepper button:disabled {
@@ -3391,11 +3374,10 @@ fieldset.settingsGroup > .settingsOption + .settingsOption {
     height: 44px;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 
     border: 0;
     background: transparent;
-    color: #d71920;
+    color: var(--sesi-red);
 
     text-align: center;
     font-family: inherit;
@@ -3405,8 +3387,25 @@ fieldset.settingsGroup > .settingsOption + .settingsOption {
 }
 
 #customMeterNumeratorLimit {
-    display: block;
-    margin-top: 8px;
-    color: #666;
-    font-size: 0.8rem;
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+/* Mais espaço para os controles em celulares estreitos. */
+@media (max-width: 360px) {
+    .customMeterLayout {
+        grid-template-columns: 56px minmax(0, 1fr);
+        gap: 8px;
+    }
+
+    .customMeterNumerator {
+        column-gap: 4px;
+    }
 }
