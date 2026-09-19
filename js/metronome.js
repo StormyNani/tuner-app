@@ -1951,20 +1951,42 @@ function installMeterControls(onApply) {
                 </div>
 
                 <div class="customMeterFields">
-                    <label>
-                        Numerador
+                    <div class="customMeterNumerator">
+                        <label for="customMeterNumeratorValue">
+                            Numerador
+                        </label>
 
-                        <input
-                            name="numerator"
-                            type="number"
-                            min="1"
-                            max="16"
-                            step="1"
-                            value="4"
-                            required
-                            inputmode="numeric"
-                        >
-                    </label>
+                        <div class="customMeterStepper">
+                            <button
+                                type="button"
+                                data-numerator-decrease
+                                aria-label="Diminuir numerador"
+                            >−</button>
+
+                            <input
+                                id="customMeterNumeratorValue"
+                                name="numerator"
+                                type="number"
+                                min="1"
+                                max="16"
+                                step="1"
+                                value="4"
+                                readonly
+                                inputmode="none"
+                                aria-describedby="customMeterNumeratorLimit"
+                            >
+
+                            <button
+                                type="button"
+                                data-numerator-increase
+                                aria-label="Aumentar numerador"
+                            >+</button>
+                        </div>
+
+                        <small id="customMeterNumeratorLimit">
+                            Máx. 16
+                        </small>
+                    </div>
 
                     <fieldset class="customMeterDenominators">
                         <legend>Denominador</legend>
@@ -2023,7 +2045,38 @@ function installMeterControls(onApply) {
     const closeButton = dialog.querySelector(".closeSettingsButton");
     const cancelButton = dialog.querySelector(".customMeterCancel");
 
+    const decreaseNumeratorButton = dialog.querySelector(
+        "[data-numerator-decrease]"
+    );
+
+    const increaseNumeratorButton = dialog.querySelector(
+        "[data-numerator-increase]"
+    );
+
+    function changeNumerator(amount) {
+        const currentValue = Number(top.value) || 1;
+
+        top.value = String(
+            Math.min(16, Math.max(1, currentValue + amount))
+        );
+
+        preview();
+    }
+
+    decreaseNumeratorButton.addEventListener("click", function () {
+        changeNumerator(-1);
+    });
+
+    increaseNumeratorButton.addEventListener("click", function () {
+        changeNumerator(1);
+    });
+
     function preview() {
+        const numerator = Number(top.value);
+
+        decreaseNumeratorButton.disabled = numerator <= 1;
+        increaseNumeratorButton.disabled = numerator >= 16;
+
         const plan = getMeterPlan(`${top.value}/${bottom.value}`);
 
         previewTop.textContent = plan ? plan.numerator : "–";

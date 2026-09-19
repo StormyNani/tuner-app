@@ -3334,3 +3334,79 @@ fieldset.settingsGroup > .settingsOption + .settingsOption {
         margin-top: 20px;
     }
 }
+
+
+
+/* Numerador do compasso personalizado */
+.customMeterNumerator {
+    min-width: 0;
+}
+
+.customMeterNumerator > label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.customMeterStepper {
+    display: grid;
+    grid-template-columns: 44px minmax(40px, 1fr) 44px;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 220px;
+}
+
+.customMeterStepper button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+
+    border: 1px solid #d71920;
+    border-radius: 12px;
+    background: #fff;
+    color: #d71920;
+    box-shadow: none;
+
+    font-size: 1.8rem;
+    line-height: 1;
+    touch-action: manipulation;
+}
+
+.customMeterStepper button:disabled {
+    opacity: 0.35;
+    cursor: default;
+    box-shadow: none;
+}
+
+#customMeterNumeratorValue {
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    border: 0;
+    background: transparent;
+    color: #d71920;
+
+    text-align: center;
+    font-family: inherit;
+    font-size: 1.6rem;
+    font-weight: 700;
+    cursor: default;
+}
+
+#customMeterNumeratorLimit {
+    display: block;
+    margin-top: 8px;
+    color: #666;
+    font-size: 0.8rem;
+}
