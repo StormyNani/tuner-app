@@ -1,5 +1,5 @@
 // Altere este valor a cada atualização publicada.
-const VERSION = "1.0.0";
+const VERSION = "1.0.2";
 
 const BASE_URL = new URL("./", self.location.href);
 
@@ -31,7 +31,8 @@ const FILES = [
 
     "icons/icon-192.png",
     "icons/icon-512.png",
-    "icons/apple-touch-icon.png"
+    "icons/apple-touch-icon.png",
+    "icons/favicon-rounded.svg"
 ];
 
 const FILE_URLS = new Set(

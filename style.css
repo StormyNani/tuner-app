@@ -3409,3 +3409,15 @@ fieldset.settingsGroup > .settingsOption + .settingsOption {
         column-gap: 4px;
     }
 }
+
+
+
+#installAppButton {
+    width: 100%;
+    min-height: 48px;
+    margin: 0;
+}
+
+#installAppGroup .metronomeSettingHelp {
+    margin: 0;
+}

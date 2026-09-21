@@ -1,3 +1,120 @@
+// INSTALAÇÃO DO APLICATIVO
+
+const installAppGroup = document.getElementById("installAppGroup");
+const installAppButton = document.getElementById("installAppButton");
+const installAppStatus = document.getElementById("installAppStatus");
+
+const standaloneMode = window.matchMedia(
+    "(display-mode: standalone)"
+);
+
+let pendingInstallPrompt = null;
+let installationInProgress = false;
+let installationConfirmed = false;
+
+function isRunningAsApp() {
+    return (
+        standaloneMode.matches ||
+        navigator.standalone === true
+    );
+}
+
+function showInstallStatus(message) {
+    installAppStatus.textContent = message;
+    installAppStatus.hidden = !message;
+}
+
+function updateInstallButton() {
+    installAppGroup.hidden =
+        isRunningAsApp() ||
+        installationConfirmed ||
+        pendingInstallPrompt === null ||
+        installationInProgress;
+}
+
+window.addEventListener("beforeinstallprompt", function (event) {
+    event.preventDefault();
+
+    pendingInstallPrompt = event;
+    installationConfirmed = false;
+
+    showInstallStatus("");
+    updateInstallButton();
+});
+
+installAppButton.addEventListener("click", async function () {
+    if (!pendingInstallPrompt || installationInProgress) {
+        return;
+    }
+
+    const promptEvent = pendingInstallPrompt;
+
+    // Cada evento de instalação só pode ser utilizado uma vez.
+    pendingInstallPrompt = null;
+    installationInProgress = true;
+    installAppButton.disabled = true;
+
+    showInstallStatus("");
+
+    try {
+        await promptEvent.prompt();
+
+        const choice = await promptEvent.userChoice;
+
+        if (
+            choice.outcome === "accepted" &&
+            !installationConfirmed
+        ) {
+            showInstallStatus(
+                "Instalação solicitada. Aguarde a conclusão pelo navegador."
+            );
+        } else if (
+            choice.outcome === "dismissed" &&
+            !installationConfirmed
+        ) {
+            showInstallStatus(
+                "Instalação cancelada. Você pode continuar usando o site."
+            );
+        }
+    } catch (error) {
+        console.error("Erro ao abrir a instalação:", error);
+
+        if (!installationConfirmed) {
+            showInstallStatus(
+                "Não foi possível abrir a instalação. " +
+                "Verifique também as opções no menu do navegador."
+            );
+        }
+    } finally {
+        installationInProgress = false;
+        installAppButton.disabled = false;
+
+        updateInstallButton();
+    }
+});
+
+window.addEventListener("appinstalled", function () {
+    installationConfirmed = true;
+    pendingInstallPrompt = null;
+
+    showInstallStatus("Aplicativo instalado.");
+    updateInstallButton();
+});
+
+standaloneMode.addEventListener("change", function () {
+    updateInstallButton();
+
+    if (isRunningAsApp()) {
+        showInstallStatus("");
+    }
+});
+
+updateInstallButton();
+
+
+
+
+
 const offlineStatus = document.getElementById("offlineStatus");
 
 function showOfflineStatus(message) {
