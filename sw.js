@@ -1,5 +1,5 @@
 // Altere este valor a cada atualização publicada.
-const VERSION = "1.0.2";
+const VERSION = "1.0.5";
 
 const BASE_URL = new URL("./", self.location.href);
 
@@ -119,4 +119,10 @@ self.addEventListener("fetch", function (event) {
             return fetch(request);
         })()
     );
+});
+
+self.addEventListener("message", function (event) {
+    if (event.data?.type === "SKIP_WAITING") {
+        event.waitUntil(self.skipWaiting());
+    }
 });

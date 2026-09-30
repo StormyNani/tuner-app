@@ -1,5 +1,7 @@
 // INSTALAÇÃO DO APLICATIVO
 
+const isNativeApp = window.Capacitor?.isNativePlatform?.() === true;
+
 const installAppGroup = document.getElementById("installAppGroup");
 const installAppButton = document.getElementById("installAppButton");
 const installAppStatus = document.getElementById("installAppStatus");
@@ -14,6 +16,7 @@ let installationConfirmed = false;
 
 function isRunningAsApp() {
     return (
+        isNativeApp ||
         standaloneMode.matches ||
         navigator.standalone === true
     );
@@ -26,10 +29,17 @@ function showInstallStatus(message) {
 
 function updateInstallButton() {
     installAppGroup.hidden =
-        isRunningAsApp() ||
-        installationConfirmed ||
-        pendingInstallPrompt === null ||
-        installationInProgress;
+        isRunningAsApp() || installationConfirmed;
+
+    installAppButton.disabled = installationInProgress;
+
+    if (installationInProgress) {
+        installAppButton.textContent = "Aguarde…";
+    } else {
+        installAppButton.textContent = pendingInstallPrompt
+            ? "Instalar aplicativo"
+            : "Como instalar";
+    }
 }
 
 window.addEventListener("beforeinstallprompt", function (event) {
@@ -43,7 +53,22 @@ window.addEventListener("beforeinstallprompt", function (event) {
 });
 
 installAppButton.addEventListener("click", async function () {
-    if (!pendingInstallPrompt || installationInProgress) {
+    if (installationInProgress) {
+        return;
+    }
+
+    if (!pendingInstallPrompt) {
+        showInstallStatus(
+            "No Android, abra este site no Chrome e toque no " +
+            "menu ⋮ > Adicionar à tela inicial > Instalar, " +
+            "se essa opção estiver disponível. " +
+            "No iPhone ou iPad, use o menu Compartilhar > " +
+            "Adicionar à Tela de Início. " +
+            "Se já instalou, abra pelo ícone do SESI Tuner. " +
+            "No computador, procure a opção de instalação " +
+            "no menu do navegador."
+        );
+
         return;
     }
 
@@ -124,6 +149,15 @@ function showOfflineStatus(message) {
 }
 
 async function initializePwa() {
+
+    if (isNativeApp) {
+        if (offlineStatus) {
+            offlineStatus.hidden = true;
+        }
+
+        return;
+    }
+
     if (!("serviceWorker" in navigator)) {
         showOfflineStatus(
             "Este navegador não oferece suporte ao modo offline."
@@ -146,6 +180,48 @@ async function initializePwa() {
         const registration = await navigator.serviceWorker.register(
             workerUrl,
             { updateViaCache: "none" }
+        );
+
+        const updateNotice = document.createElement("div");
+
+        updateNotice.className = "appUpdateNotice";
+        updateNotice.hidden = true;
+
+        updateNotice.innerHTML = `
+            <p role="status">Nova versão disponível.</p>
+            <button type="button">Atualizar agora</button>
+        `;
+
+        document.getElementById("menu").appendChild(updateNotice);
+
+        const updateButton = updateNotice.querySelector("button");
+
+        let updateRequested = false;
+
+        updateButton.addEventListener("click", function () {
+            const waitingWorker = registration.waiting;
+
+            if (!waitingWorker) {
+                updateNotice.hidden = true;
+                return;
+            }
+
+            updateRequested = true;
+            updateButton.disabled = true;
+            updateButton.textContent = "Atualizando…";
+
+            waitingWorker.postMessage({
+                type: "SKIP_WAITING"
+            });
+        });
+
+        navigator.serviceWorker.addEventListener(
+            "controllerchange",
+            function () {
+                if (updateRequested) {
+                    window.location.reload();
+                }
+            }
         );
 
         function refreshStatus() {
