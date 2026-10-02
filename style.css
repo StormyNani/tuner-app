@@ -96,16 +96,6 @@ button {
 
 
 
-button:hover:not(:disabled):not(.metronomeBeat) {
-    background-color: var(--sesi-dark-red);
-
-    transform: translateY(-2px);
-
-    box-shadow: 0 8px 18px rgba(215, 25, 32, 0.28);
-}
-
-
-
 button:active:not(:disabled) {
     transform: translateY(0);
 }
@@ -1016,18 +1006,6 @@ body.settings-open {
 
 
 
-.metronomeBpmStepButton:hover:not(:disabled) {
-    color: white;
-
-    background-color: var(--sesi-red);
-
-    transform: none;
-
-    box-shadow: none;
-}
-
-
-
 .metronomeBpmStepButton:disabled {
     opacity: 0.35;
 }
@@ -1475,20 +1453,6 @@ body.settings-open {
 
 
 
-.metronomeRhythmButton:hover:not(:disabled) {
-    color: var(--text-primary);
-
-    background-color: #fff7f7;
-
-    border-color: var(--sesi-red);
-
-    transform: none;
-
-    box-shadow: none;
-}
-
-
-
 .metronomeRhythmSymbol {
     min-width: 42px;
 
@@ -1591,20 +1555,6 @@ body.settings-open {
     border: 1px solid var(--border);
 
     border-radius: 10px;
-
-    box-shadow: none;
-}
-
-
-
-.metronomeRhythmOption:hover:not(:disabled) {
-    color: var(--sesi-red);
-
-    background-color: #fff7f7;
-
-    border-color: var(--sesi-red);
-
-    transform: none;
 
     box-shadow: none;
 }
@@ -2732,8 +2682,11 @@ body.settings-open {
     box-shadow: none;
 }
 
-.customMeterCancel:hover:not(:disabled) {
-    color: white;
+@media (hover: hover) and (pointer: fine) {
+    .customMeterCancel:hover:not(:disabled) {
+        color: white;
+        background-color: var(--sesi-dark-red);
+    }
 }
 
 /* CELULAR: janela na parte inferior, como as configurações */
@@ -3453,4 +3406,70 @@ label,
 summary,
 [role="button"] {
     -webkit-tap-highlight-color: transparent;
+}
+
+
+
+/* Efeitos de mouse somente em dispositivos compatíveis. */
+@media (hover: hover) and (pointer: fine) {
+    button:hover:not(:disabled):not(.metronomeBeat) {
+        background-color: var(--sesi-dark-red);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(215, 25, 32, 0.28);
+    }
+
+    button.metronomeBpmStepButton:hover:not(:disabled),
+    button.stringRepeatButton:hover:not(:disabled) {
+        color: white;
+        background-color: var(--sesi-red);
+        transform: none;
+        box-shadow: none;
+    }
+
+    button.metronomeRhythmButton:hover:not(:disabled),
+    button.metronomeRhythmOption:hover:not(:disabled) {
+        color: var(--text-primary);
+        background-color: #fff7f7;
+        border-color: var(--sesi-red);
+        transform: none;
+        box-shadow: none;
+    }
+}
+
+/* Destaque somente enquanto o dedo está pressionando. */
+button.metronomeBpmStepButton:active:not(:disabled),
+button.stringRepeatButton:active:not(:disabled) {
+    color: white;
+    background-color: var(--sesi-dark-red);
+    transform: none;
+    box-shadow: none;
+}
+
+/* Repetição ligada: mantém o fundo vermelho e o símbolo branco. */
+button.stringRepeatButton.active:not(:disabled) {
+    color: white;
+    background-color: var(--sesi-red);
+    transform: none;
+    box-shadow: none;
+}
+
+/* Painel aberto ou opção selecionada. */
+button.metronomeRhythmButton[aria-expanded="true"]:not(:disabled),
+button.metronomeRhythmOption.selected:not(:disabled),
+button.metronomeRhythmOption[aria-pressed="true"]:not(:disabled) {
+    color: white;
+    background-color: var(--sesi-red);
+    border-color: var(--sesi-red);
+    transform: none;
+    box-shadow: none;
+}
+
+/* Textos, números e figuras acompanham a cor do botão. */
+.metronomeRhythmButton[aria-expanded="true"] .metronomeRhythmSymbol,
+.metronomeRhythmButton[aria-expanded="true"] .metronomeRhythmButtonText,
+.metronomeRhythmButton[aria-expanded="true"] strong,
+.metronomeRhythmButton[aria-expanded="true"] small,
+.metronomeRhythmOption.selected span,
+.metronomeRhythmOption[aria-pressed="true"] span {
+    color: inherit;
 }
